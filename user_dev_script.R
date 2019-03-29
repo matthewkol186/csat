@@ -9,7 +9,7 @@ setwd("~/Documents/RSPH/TFGH/Coverage Surevey Analysis Tool/Murkonia/Version 1.1
 
 ############################################################################
 # This file gets uploading to the web server
-source("user_csv_survey_v1.0.10.R")
+source("user_csv_survey.R")
 ############################################################################
 
 ############################################################################

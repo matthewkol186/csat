@@ -11,7 +11,7 @@ setwd("~/Documents/RSPH/TFGH/Coverage Surevey Analysis Tool/Analysis Tool")
 
 ############################################################################
 # This file gets uploading to the web server
-source("survey_builder_v2.0.8.R")
+source("survey_builder.R")
 ############################################################################
 
 ############################################################################
