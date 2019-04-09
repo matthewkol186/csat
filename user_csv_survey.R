@@ -75,7 +75,7 @@ analyzeData <- function(dat) {
   
   #Checking to make sure the drug packages are selected with the appropriate disease
   
-  if (disease=="Lymphatic Filariasis"){
+  if (disease == "Lymphatic Filariasis"){
   
           if (drug=="Ivermectin" | drug=="Albendazole" | drug=="ALB & IVM" | drug=="ALB & DEC" | drug=="ALB, DEC, & IVM"){
                   
