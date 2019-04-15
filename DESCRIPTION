@@ -1,0 +1,26 @@
+Package: csat
+Title: Coverage Survey Analaysis Tool
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "First",
+           family = "Last",
+           role = c("aut", "cre"),
+           email = "first.last@example.com",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Data analysis that supports the Task Force for Global Health's Coverage Survey Analysis Tool.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    readr,
+    survey,
+    ggplot2,
+    plyr,
+    purrr,
+    reshape,
+    PropCIs,
+    dplyr,
+    testthat,
+    roxygen2
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1

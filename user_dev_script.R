@@ -1,21 +1,21 @@
 ############################################################################
-# The followings settings are for development.  
-# Paths need to match the environment that runs this script. 
+# The followings settings are for development.
+# Paths need to match the environment that runs this script.
 ############################################################################
 # configure local settings
 # source("unshared_settings.R")
 
-setwd("~/Documents/RSPH/TFGH/Coverage Surevey Analysis Tool/Murkonia/Version 1.1.3")
+setwd("C:/Users/matth/Documents/csat")
 
 ############################################################################
 # This file gets uploading to the web server
-source("user_csv_survey.R")
+source("R/user_csv_survey.R")
 ############################################################################
 
 ############################################################################
 # Set values here in development only.  Will be sent from the web server.
 
-csv_url <- "Multidistrict_Demo.csv"
+csv_url <- "demo_files/Multidistrict_Demo.csv"
 country_name<- "Murkonia"
 num_implementation_units<-3
 as.numeric(num_implementation_units)
@@ -37,7 +37,7 @@ reported_coverage_header<- "REPORTED_COVERAGE"
 # as.numeric(num_implementation_units)
 # drug_name<-"Azithromycin"
 # disease_name <- "Trachoma"
-# 
+#
 # implementation_unit_header<-"IU"
 # cluster_header<- "Cluster"
 # sex_header<- "Sex"
@@ -52,7 +52,7 @@ reported_coverage_header<- "REPORTED_COVERAGE"
 # num_implementation_units <-21
 # drug_name <- "Ivermectin"
 # disease_name <- "Onchocerciasis"
-# 
+#
 # implementation_unit_header <- "DIST"
 # cluster_header <- "CLUSTER"
 # sex_header <-"SEY"
@@ -66,7 +66,7 @@ reported_coverage_header<- "REPORTED_COVERAGE"
 
 ############################################################################
 # Everything below simulates running the uploaded script from the web server
-# attempt to run with variables from user sent from web server 
+# attempt to run with variables from user sent from web server
 doc<-try(wordDoc())
 
 if (inherits(doc, "try-error")) {
