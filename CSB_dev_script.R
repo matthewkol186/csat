@@ -1,17 +1,17 @@
 ############################################################################
-# The followings settings are for development.  
-# Paths need to match the environment that runs this script. 
+# The followings settings are for development.
+# Paths need to match the environment that runs this script.
 ############################################################################
 
 # set working directory and set variables to mimic call from web server
-setwd("~/Documents/RSPH/TFGH/Coverage Surevey Analysis Tool/Analysis Tool")
+setwd("C:/Users/matth/Documents/csat")
 
 # # configure local settings
 # source("unshared_settings.R")
 
 ############################################################################
 # This file gets uploading to the web server
-source("survey_builder.R")
+source("R/survey_builder.R")
 ############################################################################
 
 ############################################################################
@@ -20,7 +20,7 @@ source("survey_builder.R")
 # csv_url<- "emory_try.csv"#"sample_KG.csv"
 # country_name<-"United States"
 # implementation_unit_header<-"Georgia"
-# drug_name<-"Ivermectin"                                                 
+# drug_name<-"Ivermectin"
 # disease_name<-"Onchocerciasis"
 # number_of_subunits<-30
 # reported_coverage_header<-.7
@@ -37,7 +37,7 @@ reported_coverage_header<-1.25
 
 ############################################################################
 # Everything below simulates running the uploaded script from the web server
-# attempt to run with variables from user sent from web server 
+# attempt to run with variables from user sent from web server
 
 doc<-try(wordDoc())
 

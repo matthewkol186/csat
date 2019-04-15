@@ -1,0 +1,25 @@
+Package: csat
+Title: Coverage Survey Analaysis Tool
+Version: 0.0.0.9000
+Authors@R: 
+    c(person(given = "Lucas",
+           family = "Trower",
+           role = "aut",
+           email = "lucas.trower@emory.edu"))
+Description: Data analysis that supports the Task Force for Global Health's Coverage Survey Analysis Tool.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    readr,
+    survey,
+    ggplot2,
+    plyr,
+    purrr,
+    reshape,
+    PropCIs,
+    dplyr,
+    testthat,
+    roxygen2
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1
