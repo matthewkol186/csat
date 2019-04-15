@@ -2,11 +2,10 @@ Package: csat
 Title: Coverage Survey Analaysis Tool
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+    c(person(given = "Lucas",
+           family = "Trower",
+           role = "aut",
+           email = "lucas.trower@emory.edu"))
 Description: Data analysis that supports the Task Force for Global Health's Coverage Survey Analysis Tool.
 License: MIT
 Encoding: UTF-8
