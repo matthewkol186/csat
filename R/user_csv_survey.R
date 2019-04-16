@@ -357,11 +357,7 @@ analyzeData1<- function(dat2, country, numdist, r_coverage, drug, disease, distr
 
         #Selecting threshold based on disease
 
-        if (disease=="Onchocerciasis" | disease=="Lymphatic Filariasis") {
-                thresh=65
-        } else if (disease=="Trachoma") {
-                thresh=80
-        } else thresh=75 #Value for STH and Schistosomiasis
+        setDiseaseThreshold(disease)
 
         if (disease=="Onchocerciasis" | disease=="Lymphatic Filariasis") {
                 threshcol<-"Meets or Exceeds the \n Target 65% Threshold"
