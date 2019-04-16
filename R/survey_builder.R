@@ -208,11 +208,7 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         #the user chose. Onchocerciasis is used as a test, but it will need to be generated from the    #
         #-----------------------------------------------------------------------------------------------#
 
-        if (disease=="Lymphatic Filariasis" | disease=="Onchocerciasis") {
-                thresh=65
-        } else if (disease=="Trachoma") {
-                thresh=80
-        } else thresh=75 #Value for STH and Schistosomiasis
+        setDiseaseThreshold(disease)
 
         if (disease=="Onchocerciasis" | disease=="Lymphatic Filariasis") {
                 threshcol<-"Meets or Exceeds the \n Target 65% Threshold"
