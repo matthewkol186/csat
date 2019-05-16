@@ -10,3 +10,14 @@ checkDiseaseDrugMatch <- function(disease, drug) {
   )
   return(match)
 }
+
+findColsPresent <- function(all_cols, cols_to_check, data) {
+  cols_to_remove <- vector()
+  for(cname in cols_to_check){
+    if(!exists(cname, where = data)) {
+      cols_to_remove <- append(cols_to_remove, cname)
+    }
+  }
+  # remove the columns not present
+  cols_present <- all_cols[! all_cols %in% cols_to_remove]
+}
