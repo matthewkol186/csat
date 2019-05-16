@@ -237,72 +237,12 @@ each district. The program is not case sensitive.")
   # #For some reason this is no longer doing what is needed, but it does not seem to be a problem
   # #I'm leaving it in for future reference in case there are issues with removing certain columns
   #
-  #dat2<-dat2[,(!apply(is.na(dat2), 2, any))]
 
-  if (!exists("age", where = dat2) & !exists("offer", where = dat2) & !exists("school", where=dat2) & !exists("coverage", where=dat2)){
-    dat2<-dat2[,c("district","cluster","sex", "swallow")]
-    dat<-dat[,c("district","cluster","sex", "swallow")]
-
-  }else if (!exists("offer", where = dat2) & !exists("school", where=dat2) & !exists("coverage", where=dat2)){
-          dat2<-dat2[,c("district","cluster","sex", "swallow", "age")]
-          dat<-dat[,c("district","cluster","sex", "swallow", "age")]
-
-  }else if (!exists("age", where = dat2) & !exists("school", where=dat2) & !exists("coverage", where=dat2)){
-          dat2<-dat2[,c("district","cluster","sex", "swallow", "offer")]
-          dat<-dat[,c("district","cluster","sex", "swallow", "offer")]
-
-  }else if (!exists("age", where = dat2) & !exists("offer", where = dat2) & !exists("coverage", where=dat2)){
-          dat2<-dat2[,c("district","cluster","sex", "swallow", "school")]
-          dat<-dat[,c("district","cluster","sex", "swallow", "school")]
-
-  }else if (!exists("age", where = dat2) & !exists("offer", where = dat2) & !exists("school", where=dat2)){
-          dat2<-dat2[,c("district","cluster","sex", "swallow", "coverage")]
-          dat<-dat[,c("district","cluster","sex", "swallow","coverage")]
-
-  } else if (!exists("offer", where = dat2) & !exists("school", where=dat2)){
-    dat2<-dat2[,c("district","cluster","sex", "age", "swallow","coverage")]
-    dat<-dat[,c("district","cluster","sex", "age", "swallow","coverage")]
-
-  } else if (!exists("age", where = dat2) & !exists("school", where=dat2)){
-    dat2<-dat2[,c("district","cluster","sex","offer", "swallow","coverage")]
-    dat<-dat[,c("district","cluster","sex","offer", "swallow","coverage")]
-
-  } else if (!exists("age", where = dat2) & !exists("offer", where = dat2)){
-    dat2<-dat2[,c("district","cluster","sex", "swallow", "school","coverage")]
-    dat<-dat[,c("district","cluster","sex", "swallow", "school","coverage")]
-
-  } else if (!exists("coverage", where = dat2) & !exists("school", where = dat2)){
-          dat2<-dat2[,c("district","cluster","sex", "swallow", "offer", "age")]
-          dat<-dat[,c("district","cluster","sex", "swallow", "offer","age")]
-
-  } else if (!exists("coverage", where = dat2) & !exists("age", where = dat2)){
-          dat2<-dat2[,c("district","cluster","sex", "swallow", "school", "offer")]
-          dat<-dat[,c("district","cluster","sex", "swallow", "school","offer")]
-
-  } else if (!exists("coverage", where = dat2) & !exists("offer", where = dat2)){
-          dat2<-dat2[,c("district","cluster","sex", "swallow", "school","age")]
-          dat<-dat[,c("district","cluster","sex", "swallow", "school","age")]
-
-  } else if (!exists("school", where=dat2)) {
-    dat2<-dat2[,c("district","cluster","sex", "age","offer", "swallow","coverage")]
-    dat<-dat[,c("district","cluster","sex", "age","offer", "swallow","coverage")]
-
-  } else if (!exists("offer", where=dat2)) {
-    dat2<-dat2[,c("district","cluster","sex", "age", "swallow", "school","coverage")]
-    dat<-dat[,c("district","cluster","sex", "age", "swallow", "school","coverage")]
-
-  } else if (!exists("age", where = dat2)) {
-          dat2<-dat2[,c("district","cluster","sex","offer", "swallow", "school","coverage")]
-          dat<-dat[,c("district","cluster","sex","offer", "swallow", "school","coverage")]
-
-  } else if (!exists("coverage", where = dat2)) {
-          dat2<-dat2[,c("district","cluster","sex","offer", "swallow", "school","age")]
-          dat<-dat[,c("district","cluster","sex","offer", "swallow", "school","age")]
-
-  } else {
-    dat2<-dat2[,c("district","cluster","sex", "age","offer", "swallow", "school","coverage")]
-    dat<-dat[,c("district","cluster","sex", "age","offer", "swallow", "school","coverage")]
-  }
+  all_cols <- c("district","cluster","sex", "age","offer", "swallow", "school","coverage")
+  cols_to_check <- c("age", "offer", "school", "coverage")
+  present_cols <- findColsPresent(all_cols, cols_to_check, dat2)
+  dat2 <- dat2[, present_cols]
+  dat <- dat[, present_cols]
 
   #Passing the values for reported coverage from each district into a vector
 
