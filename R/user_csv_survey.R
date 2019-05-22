@@ -47,9 +47,9 @@ library(PropCIs)
 
 source("R/check_data_validity.R")
 
-wordDocUserSurvey <- function() {
+wordDoc <- function() {
   dat <- read_csv(csv_url)
-  doc <- analyzeDataUserSurvey(dat)
+  doc <- analyzeData(dat)
   return(doc)
 }
 
@@ -60,8 +60,8 @@ mode<-function(x) {
         ux[which.max(tabulate(match(x, ux)))]
 }
 
-# set Using either analyzeDataUserSurvey1 or analyzeDataUserSurvey2 if reported coverage is measured or not
-analyzeDataUserSurvey <- function(dat) {
+# set Using either analyzeData1 or analyzeData2 if reported coverage is measured or not
+analyzeData <- function(dat) {
 
   #Importing from csv in place of site uploaded file
 
@@ -278,18 +278,18 @@ each district. The program is not case sensitive.")
   dat2<-subset(dat2, (!is.na(dat2[,"district"])) & (!is.na(dat2[,"cluster"])) &
                       (!is.na(dat2[,"sex"])) & (!is.na(dat2[,"swallow"])))
 
-  #Using either analyzeUserSurveyData1 or analyzeUserSurveyData2 if reported coverage is measured or not
+  #Using either analyzeData1 or analyzeData2 if reported coverage is measured or not
 
   if (exists("r_coverage")){
-    doc<-try(analyzeDataUserSurvey1(dat2, country, numdist, r_coverage, drug, disease, district_labels, cluster_names))
+    doc<-try(analyzeData1(dat2, country, numdist, r_coverage, drug, disease, district_labels, cluster_names))
   } else{
-    doc<-try(analyzeDataUserSurvey2(dat2, country, numdist, drug, disease, district_labels, cluster_names))
+    doc<-try(analyzeData2(dat2, country, numdist, drug, disease, district_labels, cluster_names))
   }
   return(doc)
 }
 
 # Function for when reported coverage is available
-analyzeDataUserSurvey1<- function(dat2, country, numdist, r_coverage, drug, disease, district_labels, cluster_names){
+analyzeData1<- function(dat2, country, numdist, r_coverage, drug, disease, district_labels, cluster_names){
 
         #Creating vector that houses the colors for males and females for figures
 
@@ -2903,7 +2903,7 @@ What actions will your programme take to improve coverage in the poor performing
 #
 #
 
-analyzeDataUserSurvey2<- function(dat2, country, numdist, drug, disease, district_labels, cluster_names){
+analyzeData2<- function(dat2, country, numdist, drug, disease, district_labels, cluster_names){
 
         #Creating vector that houses the colors for males and females for figures
 
@@ -4985,5 +4985,3 @@ What actions will your programme take to improve coverage in the poor performing
         return(doc)
 
 }
-
-
