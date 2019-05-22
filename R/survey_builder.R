@@ -34,15 +34,15 @@ source("R/check_data_validity.R")
 
 #Purpose: Give a visual output of CSA Tool for easier interpretation
 
-wordDoc <- function() {
+wordDocCSB <- function() {
         dat <- read_csv(csv_url)
-        doc <- analyzeData(dat)
+        doc <- analyzeDataCSB(dat)
         return(doc)
 }
 
 # set Using either analyzeData1 or analyzeData2 if reported coverage is measured or not
 
-analyzeData<- function(dat) {
+analyzeDataCSB<- function(dat) {
 
         #-------------------------------------------------------------------------------------------#
         #Creating variable to change title of document for Country, Implementation Unit, & Disease  #
@@ -208,7 +208,7 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         #the user chose. Onchocerciasis is used as a test, but it will need to be generated from the    #
         #-----------------------------------------------------------------------------------------------#
 
-        setDiseaseThreshold(disease)
+        thresh = setDiseaseThreshold(disease)
 
         if (disease=="Onchocerciasis" | disease=="Lymphatic Filariasis") {
                 threshcol<-"Meets or Exceeds the \n Target 65% Threshold"

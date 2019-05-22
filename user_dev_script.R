@@ -15,7 +15,7 @@ source("R/user_csv_survey.R")
 ############################################################################
 # Set values here in development only.  Will be sent from the web server.
 
-csv_url <- "demo_files/Multidistrict_Demo.csv"
+csv_url <- "./tests/testthat/demo_files/Multidistrict_Demo.csv"
 country_name<- "Murkonia"
 num_implementation_units<-3
 as.numeric(num_implementation_units)
@@ -67,7 +67,7 @@ reported_coverage_header<- "REPORTED_COVERAGE"
 ############################################################################
 # Everything below simulates running the uploaded script from the web server
 # attempt to run with variables from user sent from web server
-doc<-try(wordDoc())
+doc<-try(wordDocUserSurvey())
 
 if (inherits(doc, "try-error")) {
         error <- conditionMessage(attr(doc, "condition"))
