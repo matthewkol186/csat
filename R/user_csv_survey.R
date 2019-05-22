@@ -82,9 +82,16 @@ analyzeData <- function(dat) {
 
   #Check to see if the column they specfied exists, and rename columns based on user input if they do
 
+
+  #this is new code from vikas - it can replace all column name checking
+  # checkUnmatchedHeaders(dat, implementation_unit_header, cluster_header, sex_header,
+  #                                   offered_drug_header, swallowed_drug_header, school_attendance_header,
+  #                                   reported_coverage_header)
+  #
   #
   # District
   #
+
 
   if (any(colnames(dat)==implementation_unit_header)){
           colnames(dat)[colnames(dat)==implementation_unit_header]<-"district"
@@ -189,7 +196,7 @@ analyzeData <- function(dat) {
 
   }
 
-  #If the district variable is a character varaible, this will make all entries
+  #If the cluster variable is a character varaible, this will make all entries
   #upper case in order to avoid errors in case entry from original dataset
 
   if(is.character(dat$cluster)){
