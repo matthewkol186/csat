@@ -1,5 +1,3 @@
-
-
 # Check whether the disease matches the drug administered.
 checkDiseaseDrugMatch <- function(disease, drug) {
   match = switch(disease,
@@ -87,4 +85,15 @@ checkUnmatchedHeaders <- function(data, implementation_unit_header, cluster_head
     #         you entered into the web tool. The following headers were not found: " + vectorNoHeader)
     return(vectorNoHeader)
   }
+}
+
+findColsPresent <- function(all_cols, cols_to_check, data) {
+  cols_to_remove <- vector()
+  for(cname in cols_to_check){
+    if(!exists(cname, where = data)) {
+      cols_to_remove <- append(cols_to_remove, cname)
+    }
+  }
+  # remove the columns not present
+  cols_present <- all_cols[! all_cols %in% cols_to_remove]
 }
