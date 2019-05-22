@@ -39,7 +39,7 @@ reported_coverage_header<-1.25
 # Everything below simulates running the uploaded script from the web server
 # attempt to run with variables from user sent from web server
 
-doc<-try(wordDoc())
+doc<-try(wordDocCSB())
 
 if (inherits(doc, "try-error")) {
         error <- conditionMessage(attr(doc, "condition"))
