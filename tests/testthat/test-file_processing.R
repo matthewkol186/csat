@@ -38,6 +38,8 @@ runCSB <- function(csv_url, country_name, drug_name, disease_name, implementatio
 }
 
 test_that("MultiDistrictDemo file works", {
+  orig_wd <- getwd()
+  setwd("../..")
   csv_url <- "./demo_files/Multidistrict_Demo.csv"
   country_name<- "Murkonia"
   num_implementation_units<-3
@@ -57,10 +59,13 @@ test_that("MultiDistrictDemo file works", {
                 disease_name, implementation_unit_header, cluster_header, sex_header,
                 offered_drug_header, swallowed_drug_header, reported_coverage_header)
   expect_false(error)
-
+  setwd(orig_wd)
 })
 
 test_that("SingleDistrictDemo file works", {
+  # temporarily change directory
+  orig_wd <- getwd()
+  setwd("../..")
   csv_url <- "./demo_files/Single_District_Demo.csv"
   country_name<-"United States"
   implementation_unit_header<-"Georgia"
@@ -72,5 +77,5 @@ test_that("SingleDistrictDemo file works", {
   error <- runCSB(csv_url, country_name, drug_name, disease_name, implementation_unit_header,
          number_of_subunits, reported_coverage_header)
   expect_false(error)
-
+  setwd(orig_wd)
 })
