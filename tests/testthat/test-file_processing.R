@@ -2,7 +2,8 @@ context("test-file_processing")
 
 runUserSurvey <- function(csv_url, country_name, num_implementation_units, drug_name,
                           disease_name, implementation_unit_header, cluster_header, sex_header,
-                          offered_drug_header, swallowed_drug_header, reported_coverage_header) {
+                          offered_drug_header, swallowed_drug_header, reported_coverage_header,
+                          language) {
   # set global variables <- this is probably not ideal
   # todo: remove dependency on global variables
   csv_url <<- csv_url
@@ -22,7 +23,7 @@ runUserSurvey <- function(csv_url, country_name, num_implementation_units, drug_
 }
 
 runCSB <- function(csv_url, country_name, drug_name, disease_name, implementation_unit_header,
-                   number_of_subunits, reported_coverage_header) {
+                   number_of_subunits, reported_coverage_header, language) {
   # set global variables <- this is probably not ideal
   # todo: remove dependency on global variables
   csv_url <<- csv_url
@@ -47,6 +48,7 @@ test_that("MultiDistrictDemo file works", {
   as.numeric(num_implementation_units)
   drug_name<-"Azithromycin"
   disease_name <- "Trachoma"
+  language <- "en"
 
   implementation_unit_header<-"DISTRICT"
   cluster_header<- "VILLAGE_NUMBER"
@@ -58,7 +60,7 @@ test_that("MultiDistrictDemo file works", {
 
   error <- runUserSurvey(csv_url, country_name, num_implementation_units, drug_name,
                 disease_name, implementation_unit_header, cluster_header, sex_header,
-                offered_drug_header, swallowed_drug_header, reported_coverage_header)
+                offered_drug_header, swallowed_drug_header, reported_coverage_header, language)
   expect_false(error)
   setwd(orig_wd)
 })
@@ -74,9 +76,10 @@ test_that("SingleDistrictDemo file works", {
   disease_name<-"Onchocerciasis"
   number_of_subunits<-30
   reported_coverage_header<-.7
+  language <- "en"
 
   error <- runCSB(csv_url, country_name, drug_name, disease_name, implementation_unit_header,
-         number_of_subunits, reported_coverage_header)
+         number_of_subunits, reported_coverage_header, language)
   expect_false(error)
   setwd(orig_wd)
 })
