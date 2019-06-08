@@ -38,6 +38,7 @@ runCSB <- function(csv_url, country_name, drug_name, disease_name, implementatio
 }
 
 test_that("MultiDistrictDemo file works", {
+  #temporarily change directory
   orig_wd <- getwd()
   setwd("../..")
   csv_url <- "./demo_files/Multidistrict_Demo.csv"
