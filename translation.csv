@@ -9,13 +9,18 @@ Une ou plusieurs des sous-unité(s) indique que le nombre d'hommes ayant avalé 
 Une ou plusieurs des sous-unité(s) indique que le nombre d'hommes ayant avalé le médicament est supérieur au nombre d'hommes à qui le médicament a été proposé,One or more of the subunits has more males swallowing the drug than offered
 Le médicament / paquet de médicaments sélectionné n'est pas utilisé pour traiter la maladie sélectionnée,The drug/drug package selected is not used in treatment for the disease selected
 Un valeur non numérique ou un espace vide apparaît dans le champ où une valeur numérique est prévue. Veuillez passer en revue votre fichier pour vous assurer qu'il n'y a pas d'erreurs.,There is a non-numeric or blank value where a numeric value is expected. Please look through your file to check for an error.
-Atteint ou dépasse le seuil fixé à 65 %,Meets or Exceeds the 65% Threshold
-Atteint ou dépasse le seuil fixé à 80 %,Meets or Exceeds the 80% Threshold
-Atteint ou dépasse le seuil fixé à 75 %,Meets or Exceeds the 75% Threshold
+Atteint ou dépasse,Meets or Exceeds
+le seuil fixé à 65 %,the Target 65% Threshold
+le seuil fixé à 75 %,the Target 75% Threshold
+le seuil fixé à 80 %,the Target 80% Threshold
 Nombre de personnes interrogées ayant reporté que le médicament leur a été proposé,Proportion of respondents who reported being offered
 Porté du programme estimé en fonction du sexe,Estimated Programme Reach by Gender
-Seuil de couverture cible de l'OMS,WHO Target Coverage Threshold
-Nombre de personnes interrogées ayant reporté avoir avalé le médicament,Proportion of respondents who reported swallowing [drug]
+Seuil de,WHO
+couverture,Target
+cible,Coverage
+de l'OMS,Threshold
+le médicament,drug
+Nombre de personnes interrogées ayant reporté avoir avalé,Proportion of respondents who reported swallowing
 Couverture de l'étude estimée en fonction du sexe,Estimated Survey Coverage by Gender
 "Total, Hommes, Femmes","Overall, Male, Female"
 "Interrogés, Ayant avalé, Sous-unité","Interviewed, Swallowed, Subunit"

@@ -31,18 +31,20 @@ library(PropCIs)
 library(dplyr)
 
 source("R/check_data_validity.R")
+source("R/internationalization.R")
 
 #Purpose: Give a visual output of CSA Tool for easier interpretation
 
 wordDocCSB <- function() {
         dat <- read_csv(csv_url)
-        doc <- analyzeDataCSB(dat)
+        vocab <- translation_map()
+        doc <- analyzeDataCSB(dat, vocab)
         return(doc)
 }
 
 # set Using either analyzeData1 or analyzeData2 if reported coverage is measured or not
 
-analyzeDataCSB<- function(dat) {
+analyzeDataCSB<- function(dat, vocab) {
 
         #-------------------------------------------------------------------------------------------#
         #Creating variable to change title of document for Country, Implementation Unit, & Disease  #
@@ -58,7 +60,7 @@ analyzeDataCSB<- function(dat) {
 
         #Checking to make sure the drug packages are selected with the appropriate disease
         if (!checkDiseaseDrugMatch(disease, drug)){
-          stop("The drug/drug package selected is not used in treatment for the disease selected")
+          stop(i18n("The drug/drug package selected is not used in treatment for the disease selected", language, vocab))
         }
 
         sub_num<-as.numeric(number_of_subunits)
@@ -119,7 +121,7 @@ analyzeDataCSB<- function(dat) {
                 if (colnames(version_check)[b] == version_col_names[b] | colnames(version_check)[b] == version_col_names2[b]){
 
                 }else{
-                        stop("Dataset uploaded does not match the most recent version of the Coverage Survey Builder output. Please copy and paste the following URL (https://www.ntdsupport.org/resources/coverage-survey-builder-coverage-evaluations) into your browser, or utilize the template provided on this website.")
+                        stop(i18n("Dataset uploaded does not match the most recent version of the Coverage Survey Builder output. Please copy and paste the following URL (https://www.ntdsupport.org/resources/coverage-survey-builder-coverage-evaluations) into your browser, or utilize the template provided on this website.", language, vocab))
                 }
         }
 
@@ -138,7 +140,7 @@ analyzeDataCSB<- function(dat) {
         for (r in 1:dim(datcheck)[1]){
                 for (c in 1:dim(datcheck)[2]){
                         if(!is.numeric(datcheck[r,c]) | is.na(datcheck[r,c])){
-                                stop(paste("There is a non-numeric or blank value where a numeric value is expected. Please look through your file to check for an error."))
+                                stop(paste(i18n("There is a non-numeric or blank value where a numeric value is expected. Please look through your file to check for an error.", language, vocab)))
                         }
                 }
         }
@@ -154,29 +156,29 @@ analyzeDataCSB<- function(dat) {
         #Female
 
                 if (dat2$Females_Offered[a] > dat2$Females_Interviewed[a]){
-                        stop("One or more of the subunits has more females offered the drug than interviewed")
+                        stop(i18n("One or more of the subunits has more females offered the drug than interviewed"), language, vocab)
                 }
 
                 if (dat2$Females_Swallowed[a] > dat2$Females_Interviewed[a]){
-                        stop("One or more of the subunits has more females swallowing the drug than interviewed")
+                        stop(i18n("One or more of the subunits has more females swallowing the drug than interviewed"), language, vocab)
                 }
 
                 if (dat2$Females_Swallowed[a] > dat2$Females_Offered[a]){
-                        stop("One or more of the subunits has more females swallowing the drug than offered")
+                        stop(i18n("One or more of the subunits has more females swallowing the drug than offered"), language, vocab)
                 }
 
         #Male
 
                 if (dat2$Males_Offered[a] > dat2$Males_Interviewed[a]){
-                        stop("One or more of the subunits has more males offered the drug than interviewed")
+                        stop(i18n("One or more of the subunits has more males offered the drug than interviewed"), language, vocab)
                 }
 
                 if (dat2$Males_Swallowed[a] > dat2$Males_Interviewed[a]){
-                        stop("One or more of the subunits has more males swallowing the drug than interviewed")
+                        stop(i18n("One or more of the subunits has more males swallowing the drug than interviewed"), language, vocab)
                 }
 
                 if (dat2$Males_Swallowed[a] > dat2$Males_Offered[a]){
-                        stop("One or more of the subunits has more males swallowing the drug than offered")
+                        stop(i18n("One or more of the subunits has more males swallowing the drug than offered"), language, vocab)
                 }
 
         }
@@ -184,15 +186,15 @@ analyzeDataCSB<- function(dat) {
         dat2<-dat2[complete.cases(dat2),]
 
         if (exists("r_coverage")){
-                doc<-try(analyzeData1(dat2, country, IU, disease, drug, r_coverage, sub_num))
+                doc<-try(analyzeData1(dat2, country, IU, disease, drug, r_coverage, sub_num, vocab))
         } else{
-                doc<-try(analyzeData2(dat2, country, IU, disease, drug, sub_num))
+                doc<-try(analyzeData2(dat2, country, IU, disease, drug, sub_num, vocab))
         }
         return(doc)
 
 }
 
-analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
+analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num, vocab, lang='en'){
 
 
         #Creating vector that houses the colors for males and females for figures
@@ -211,10 +213,12 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         thresh = setDiseaseThreshold(disease)
 
         if (disease=="Onchocerciasis" | disease=="Lymphatic Filariasis") {
-                threshcol<-"Meets or Exceeds the \n Target 65% Threshold"
+          threshcol<-paste(i18n("Meets or Exceeds", language, vocab), "\n",
+                                 i18n("the Target 65% Threshold", language, vocab))
         } else if (disease=="Trachoma") {
-                threshcol<-"Meets or Exceeds the \n Target 80% Threshold"
-        } else threshcol<-"Meets or Exceeds the \n Target 75% Threshold" #Value for STH and Schistosomiasis
+          threshcol<-paste(i18n("Meets or Exceeds", language, vocab), "\n",
+                           i18n("the Target 75% Threshold", language, vocab))
+        } else threshcol<-paste(i18n("Meets or Exceeds", language, vocab), "\n", i18n("the Target 80% Threshold", language, vocab)) #Value for STH and Schistosomiasis
 
         #first add columns for number not swallowed and not offered
         dat2$Females_Noswallow<-dat2$Females_Interviewed - dat2$Females_Swallowed
@@ -390,8 +394,8 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                 geom_point(shape=c(21,24,22),fill=c("#000000","#FF9F33","#428EFC"),
                            stat="identity",color=c("black","black","black"),size=3)+
                 xlab("")+
-                ylab(paste("Proportion of respondents who reported being offered \n",drug)) +
-                ggtitle("Estimated Programme Reach by Gender")+
+                ylab(paste(i18n("Proportion of respondents who reported being offered", language, vocab), "\n",drug)) +
+                ggtitle(i18n("Estimated Programme Reach by Gender", language, vocab))+
                 theme(plot.title = element_text(hjust = 0.5, size=16))+
                 scale_x_continuous(breaks = c(5,15,25), limits = c(0, 30), labels=c("Overall","Male","Female"))+
                 theme(
@@ -407,7 +411,8 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                 geom_text(label=paste(format(round(total_pr2[1:1]*100,1),nsmall=1),"%"), x=3, y=total_pr2[1:1]*100)+
                 geom_text(label=paste(format(round(male_pr2[1:1]*100,1),nsmall=1),"%"), x=13, y=male_pr2[1:1]*100)+
                 geom_text(label=paste(format(round(female_pr2[1:1]*100,1),nsmall=1), "%"), x=23, y=female_pr2[1:1]*100)+
-                scale_color_discrete(breaks="WHO \nTarget \nCoverage \nThreshold")
+                scale_color_discrete(breaks=paste(i18n("WHO", language, vocab),i18n("Target", language, vocab),
+                                                  i18n("Coverage", language, vocab), i18n("Threshold", language, vocab), sep="\n"))
 
         plot1
 
@@ -427,8 +432,10 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         lowci<-final_2[2,1]*100
         upci<-final_2[3,1]*100
 
+        cov_thresh_sentence = paste(i18n("WHO", language, vocab),i18n("Target", language, vocab),
+                                    i18n("Coverage", language, vocab), i18n("Threshold", language, vocab), sep="\n")
         plot2<- ggplot(data=final_2*100, aes(x=c(5,15,25), y=c(total_sc2[1:1],male_sc2[1:1],female_sc2[1:1])))+
-                geom_hline(aes(yintercept=thresh, linetype="WHO \nTarget \nCoverage \nThreshold"),
+                geom_hline(aes(yintercept=thresh, linetype=cov_thresh_sentence),
                            color="red3")+
                 geom_errorbar(aes(ymin=c(total_sc2[2:2],male_sc2[2:2], female_sc2[2:2]),
                                   ymax=c(total_sc2[3:3],male_sc2[3:3],female_sc2[3:3])),
@@ -439,7 +446,8 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                 xlab("")+
                 geom_point(aes(5,r_coverage), color='black', size=2, shape=8)+       #Y-value will need to be pulled from the information the user enters on the homepage of the tool. Create a variable that will change the value of 90 based on this number
                 geom_text(label='\nReported \nCoverage', x=8, y=r_coverage, size=3)+   #Y-value will need to be pulled from the information the user enters on the homepage of the tool. Create a variable that will change the value of 90 based on this number
-                ylab(paste("Proportion of respondents who reported swallowing \n",drug)) +
+                ylab(paste(i18n("Proportion of respondents who reported swallowing", language, vocab),
+                           "\n", drug, sep='')) +
                 ggtitle("Estimated Survey Coverage by Gender")+
                 theme(plot.title = element_text(hjust = 0.5, size=16))+
                 scale_x_continuous(breaks = c(5,15,25), limits = c(0, 30), labels=c("Overall","Male", "Female"))+
@@ -456,7 +464,7 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                 geom_text(label=paste(format(round(total_sc2[1:1]*100,1),nsmall=1),"%"), x=3, y=total_sc2[1:1]*100)+
                 geom_text(label=paste(format(round(male_sc2[1:1]*100,1),nsmall=1),"%"), x=13, y=male_sc2[1:1]*100)+
                 geom_text(label=paste(format(round(female_sc2[1:1]*100,1),nsmall=1), "%"), x=23, y=female_sc2[1:1]*100)+
-                scale_color_discrete(breaks="WHO \nTarget \nCoverage \nThreshold") #Only allows "WHO"
+                scale_color_discrete(breaks=cov_thresh_sentence) #Only allows "WHO"
 
         plot2
 
@@ -540,14 +548,15 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
 
         plot5<- ggplot(data=dat_treat.conf.lim, aes(x=Subunit, y=Treated))+
-                geom_hline(aes(yintercept=thresh, linetype="WHO \nTarget \nCoverage \nThreshold"),
+                geom_hline(aes(yintercept=thresh, linetype=cov_thresh_sentence),
                            color="red3")+
                 geom_point(stat="identity")+
                 geom_errorbar(aes(ymin=dat_treat.conf.lim$uci, ymax=dat_treat.conf.lim$lci),
                               width=.2,
                               position=position_dodge(.9))+
                 xlab("Cluster")+
-                ylab(paste("Proportion of respondents who reported swallowing \n",drug)) +
+                ylab(paste(i18n("Proportion of respondents who reported swallowing", language, vocab),
+                           "\n", drug, sep='')) +
                 ggtitle("Plot of Survey Coverage by Subunit: Greatest to Least Coverage") +
                 theme(
                         plot.title = element_text(hjust = 0.5, size=12, face="bold"),
@@ -1558,7 +1567,7 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
 }
 
-analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
+analyzeData2<-function(dat2, country, IU, disease, drug, sub_num, vocab, lang='en'){
 
         #Creating vector that houses the colors for males and females for figures
 
@@ -1746,6 +1755,8 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
         female_pr2 = c(final[2:2,1:1],final[2:2,2:2] ,final[2:2,3:3])
         final_3 = data.frame(total_pr2, male_pr2, female_pr2)
 
+        cov_thresh_sentence = paste(i18n("WHO", language, vocab),i18n("Target", language, vocab),
+                                    i18n("Coverage", language, vocab), i18n("Threshold", language, vocab), sep="\n")
         plot1<- ggplot(data=final_3*100, aes(x=c(5,15,25), y=c(total_pr2[1:1],male_pr2[1:1],female_pr2[1:1])))+
                 geom_errorbar(aes(ymin=c(total_pr2[2:2],male_pr2[2:2], female_pr2[2:2]),
                                   ymax=c(total_pr2[3:3],male_pr2[3:3], female_pr2[3:3])),
@@ -1771,7 +1782,7 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
                 geom_text(label=paste(format(round(total_pr2[1:1]*100,1),nsmall=1),"%"), x=3, y=total_pr2[1:1]*100)+
                 geom_text(label=paste(format(round(male_pr2[1:1]*100,1),nsmall=1),"%"), x=13, y=male_pr2[1:1]*100)+
                 geom_text(label=paste(format(round(female_pr2[1:1]*100,1),nsmall=1), "%"), x=23, y=female_pr2[1:1]*100)+
-                scale_color_discrete(breaks="WHO \nTarget \nCoverage \nThreshold")
+                scale_color_discrete(breaks=cov_thresh_sentence)
 
         plot1
 
@@ -1789,7 +1800,7 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
         final_2 = data.frame(total_sc2, male_sc2, female_sc2)
 
         plot2<- ggplot(data=final_2*100, aes(x=c(5,15,25), y=c(total_sc2[1:1],male_sc2[1:1],female_sc2[1:1])))+
-                geom_hline(aes(yintercept=thresh, linetype="WHO \nTarget \nCoverage \nThreshold"),
+                geom_hline(aes(yintercept=thresh, linetype=cov_thresh_sentence),
                            color="red3")+
                 geom_errorbar(aes(ymin=c(total_sc2[2:2],male_sc2[2:2], female_sc2[2:2]),
                                   ymax=c(total_sc2[3:3],male_sc2[3:3],female_sc2[3:3])),
@@ -1800,7 +1811,8 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
                 xlab("")+
                 # geom_point(aes(5,r_coverage), color='black', size=2, shape=8)+       #Y-value will need to be pulled from the information the user enters on the homepage of the tool. Create a variable that will change the value of 90 based on this number
                 # geom_text(label='\nReported \nCoverage', x=8, y=r_coverage, size=3)+   #Y-value will need to be pulled from the information the user enters on the homepage of the tool. Create a variable that will change the value of 90 based on this number
-                ylab(paste("Proportion of respondents who reported swallowing \n",drug)) +
+                ylab(paste(i18n("Proportion of respondents who reported swallowing", language, vocab),
+                           "\n", drug, sep='')) +
                 ggtitle("Estimated Survey Coverage by Gender")+
                 theme(plot.title = element_text(hjust = 0.5, size=16))+
                 scale_x_continuous(breaks = c(5,15,25), limits = c(0, 30), labels=c("Overall","Male", "Female"))+
@@ -1817,7 +1829,7 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
                 geom_text(label=paste(format(round(total_sc2[1:1]*100,1),nsmall=1),"%"), x=3, y=total_sc2[1:1]*100)+
                 geom_text(label=paste(format(round(male_sc2[1:1]*100,1),nsmall=1),"%"), x=13, y=male_sc2[1:1]*100)+
                 geom_text(label=paste(format(round(female_sc2[1:1]*100,1),nsmall=1), "%"), x=23, y=female_sc2[1:1]*100)+
-                scale_color_discrete(breaks="WHO \nTarget \nCoverage \nThreshold") #Only allows "WHO"
+                scale_color_discrete(breaks=cov_thresh_sentence) #Only allows "WHO"
 
         plot2
 
@@ -1899,14 +1911,15 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
 
         plot5<- ggplot(data=dat_treat.conf.lim, aes(x=Subunit, y=Treated))+
-                geom_hline(aes(yintercept=thresh, linetype="WHO \nTarget \nCoverage \nThreshold"),
+                geom_hline(aes(yintercept=thresh, linetype=cov_thresh_sentence),
                            color="red3")+
                 geom_point(stat="identity")+
                 geom_errorbar(aes(ymin=dat_treat.conf.lim$uci, ymax=dat_treat.conf.lim$lci),
                               width=.2,
                               position=position_dodge(.9))+
                 xlab("Cluster")+
-                ylab(paste("Proportion of respondents who reported swallowing \n",drug)) +
+                ylab(paste(i18n("Proportion of respondents who reported swallowing", language, vocab),
+                           "\n", drug, sep='')) +
                 ggtitle("Plot of Survey Coverage by Subunit: Greatest to Least Coverage") +
                 theme(
                         plot.title = element_text(hjust = 0.5, size=12, face="bold"),

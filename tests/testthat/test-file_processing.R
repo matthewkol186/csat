@@ -3,7 +3,7 @@ context("test-file_processing")
 runUserSurvey <- function(csv_url, country_name, num_implementation_units, drug_name,
                           disease_name, implementation_unit_header, cluster_header, sex_header,
                           offered_drug_header, swallowed_drug_header, reported_coverage_header,
-                          language) {
+                          language='en') {
   # set global variables <- this is probably not ideal
   # todo: remove dependency on global variables
   csv_url <<- csv_url
@@ -17,13 +17,15 @@ runUserSurvey <- function(csv_url, country_name, num_implementation_units, drug_
   offered_drug_header <<- offered_drug_header
   swallowed_drug_header <<- swallowed_drug_header
   reported_coverage_header <<- reported_coverage_header
+  reported_coverage_header <<- reported_coverage_header
+  language <<- language
   # suppress output - random print statements
   invisible(capture.output(doc <- try(wordDocUserSurvey())))
   error <- inherits(doc, "try-error")
 }
 
 runCSB <- function(csv_url, country_name, drug_name, disease_name, implementation_unit_header,
-                   number_of_subunits, reported_coverage_header, language) {
+                   number_of_subunits, reported_coverage_header, language='en') {
   # set global variables <- this is probably not ideal
   # todo: remove dependency on global variables
   csv_url <<- csv_url
@@ -33,6 +35,7 @@ runCSB <- function(csv_url, country_name, drug_name, disease_name, implementatio
   implementation_unit_header <<- implementation_unit_header
   number_of_subunits <<- number_of_subunits
   reported_coverage_header <<- reported_coverage_header
+  language <<- language
   # suppress output - random print statements
   invisible(capture.output(doc <- try(wordDocCSB())))
   error <- inherits(doc, "try-error")
@@ -48,7 +51,6 @@ test_that("MultiDistrictDemo file works", {
   as.numeric(num_implementation_units)
   drug_name<-"Azithromycin"
   disease_name <- "Trachoma"
-  language <- "en"
 
   implementation_unit_header<-"DISTRICT"
   cluster_header<- "VILLAGE_NUMBER"
@@ -76,7 +78,6 @@ test_that("SingleDistrictDemo file works", {
   disease_name<-"Onchocerciasis"
   number_of_subunits<-30
   reported_coverage_header<-.7
-  language <- "en"
 
   error <- runCSB(csv_url, country_name, drug_name, disease_name, implementation_unit_header,
          number_of_subunits, reported_coverage_header, language)
