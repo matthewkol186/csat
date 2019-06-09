@@ -386,6 +386,9 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num, vo
         female_pr2 = c(final[2:2,1:1],final[2:2,2:2] ,final[2:2,3:3])
         final_3 = data.frame(total_pr2, male_pr2, female_pr2)
 
+        x_overall_male_female = c(i18n("Overall", language, vocab),
+                                  i18n("Male", language, vocab),
+                                  i18n("Female", language, vocab))
         plot1<- ggplot(data=final_3*100, aes(x=c(5,15,25), y=c(total_pr2[1:1],male_pr2[1:1],female_pr2[1:1])))+
                 geom_errorbar(aes(ymin=c(total_pr2[2:2],male_pr2[2:2], female_pr2[2:2]),
                                   ymax=c(total_pr2[3:3],male_pr2[3:3], female_pr2[3:3])),
@@ -448,7 +451,7 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num, vo
                 geom_text(label='\nReported \nCoverage', x=8, y=r_coverage, size=3)+   #Y-value will need to be pulled from the information the user enters on the homepage of the tool. Create a variable that will change the value of 90 based on this number
                 ylab(paste(i18n("Proportion of respondents who reported swallowing", language, vocab),
                            "\n", drug, sep='')) +
-                ggtitle("Estimated Survey Coverage by Gender")+
+                ggtitle(i18n("Estimated Survey Coverage by Gender", language, vocab))+
                 theme(plot.title = element_text(hjust = 0.5, size=16))+
                 scale_x_continuous(breaks = c(5,15,25), limits = c(0, 30), labels=c("Overall","Male", "Female"))+
                 theme(
@@ -1813,7 +1816,7 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num, vocab, lang='e
                 # geom_text(label='\nReported \nCoverage', x=8, y=r_coverage, size=3)+   #Y-value will need to be pulled from the information the user enters on the homepage of the tool. Create a variable that will change the value of 90 based on this number
                 ylab(paste(i18n("Proportion of respondents who reported swallowing", language, vocab),
                            "\n", drug, sep='')) +
-                ggtitle("Estimated Survey Coverage by Gender")+
+                ggtitle(i18n("Estimated Survey Coverage by Gender", language, vocab))+
                 theme(plot.title = element_text(hjust = 0.5, size=16))+
                 scale_x_continuous(breaks = c(5,15,25), limits = c(0, 30), labels=c("Overall","Male", "Female"))+
                 theme(

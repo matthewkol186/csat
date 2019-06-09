@@ -22,7 +22,9 @@ de l'OMS,Threshold
 le médicament,drug
 Nombre de personnes interrogées ayant reporté avoir avalé,Proportion of respondents who reported swallowing
 Couverture de l'étude estimée en fonction du sexe,Estimated Survey Coverage by Gender
-"Total, Hommes, Femmes","Overall, Male, Female"
+Total,Overall
+Hommes,Male
+Femmes,Female
 "Interrogés, Ayant avalé, Sous-unité","Interviewed, Swallowed, Subunit"
 Groupe,Cluster
 Tracé de la couverture de l'étude par la sous-unité : Zone de couverture par ordre décroissant,Plot of Survey Coverage by Subunit: Greatest to Least Coverage
