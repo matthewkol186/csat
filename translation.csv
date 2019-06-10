@@ -1,0 +1,167 @@
+﻿fr,en
+Le médicament / paquet de médicaments sélectionné n'est pas utilisé pour traiter la maladie sélectionnée,The drug/drug package selected is not used in treatment for the disease selected
+"Le jeu de données sélectionné ne correspond pas à la toute dernière version des résultats du Coverage Survey Builder. Veuillez copier-coller l'adresse URL suivante (https://www.ntdsupport.org/resources/coverage-survey-builder-coverage-evaluations) dans votre navigateur, ou utiliser le modèle fourni dans ce site Web.","Dataset uploaded does not match the most recent version of the Coverage Survey Builder output. Please copy and paste the following URL (https://www.ntdsupport.org/resources/coverage-survey-builder-coverage-evaluations) into your browser, or utilize the template provided on this website."
+Une ou plusieurs des sous-unité(s) indique que le nombre de femmes à qui le médicament a été proposé est supérieur au nombre de femmes interrogées,One or more of the subunits has more females offered the drug than interviewed
+Une ou plusieurs des sous-unité(s) indique que le nombre de femmes ayant avalé le médicament est supérieur au nombre de femmes interrogées,One or more of the subunits has more females swallowing the drug than interviewed
+Une ou plusieurs des sous-unité(s) indique que le nombre de femmes ayant avalé le médicament est supérieur au nombre de femmes à qui le médicament a été proposé,One or more of the subunits has more females swallowing the drug than offered
+Une ou plusieurs des sous-unité(s) indique que le nombre d'hommes à qui le médicament a été proposé est supérieur au nombre d'hommes interrogés,One or more of the subunits has more males offered the drug than interviewed
+Une ou plusieurs des sous-unité(s) indique que le nombre d'hommes ayant avalé le médicament est supérieur au nombre d'hommes interrogés,One or more of the subunits has more males swallowing the drug than interviewed
+Une ou plusieurs des sous-unité(s) indique que le nombre d'hommes ayant avalé le médicament est supérieur au nombre d'hommes à qui le médicament a été proposé,One or more of the subunits has more males swallowing the drug than offered
+Le médicament / paquet de médicaments sélectionné n'est pas utilisé pour traiter la maladie sélectionnée,The drug/drug package selected is not used in treatment for the disease selected
+Un valeur non numérique ou un espace vide apparaît dans le champ où une valeur numérique est prévue. Veuillez passer en revue votre fichier pour vous assurer qu'il n'y a pas d'erreurs.,There is a non-numeric or blank value where a numeric value is expected. Please look through your file to check for an error.
+Atteint ou dépasse,Meets or Exceeds
+le seuil fixé à 65 %,the Target 65% Threshold
+le seuil fixé à 75 %,the Target 75% Threshold
+le seuil fixé à 80 %,the Target 80% Threshold
+Nombre de personnes interrogées ayant reporté que le médicament leur a été proposé,Proportion of respondents who reported being offered
+Porté du programme estimé en fonction du sexe,Estimated Programme Reach by Gender
+Seuil de,WHO
+couverture,Target
+cible,Coverage
+de l'OMS,Threshold
+le médicament,drug
+Nombre de personnes interrogées ayant reporté avoir avalé,Proportion of respondents who reported swallowing
+Couverture de l'étude estimée en fonction du sexe,Estimated Survey Coverage by Gender
+Total,Overall
+Hommes,Male
+Femmes,Female
+Interrogés,Interviewed
+Ayant avalé,Swallowed
+Sous-unité,Subunit
+Groupe,Cluster
+Tracé de la couverture de l'étude par la sous-unité : Zone de couverture par ordre décroissant,Plot of Survey Coverage by Subunit: Greatest to Least Coverage
+Sommaire des résultats d'évaluation de la couverture :,Coverage Evaluation Results Summary:
+ce sommaire passe en revue les résultats des études d'évaluation de la couverture des,This summary reviews the results from coverage evaluation surveys for
+ réalisées à, that were conducted in
+Termes clés,Key Terms
+Couverture rapportée :,Reported Coverage:
+" couverture calculée à partir des données rapportées par tous les distributeurs de médicaments, en utilisant les données du recensement ou les rapports des distributeurs de médicaments pour estimer le dénominateur de la population."," The coverage calculated from data reported by all drug distributors, with census figures or drug distributor reports used to estimate the population denominator."
+couverture de l'étude :,Survey Coverage:
+ couverture estimée à partir de méthodes d'échantillonnage d'étude basée sur la population. Le dénominateur correspond au nombre total de personnes interrogées ; le numérateur correspond au nombre total de personnes interrogées reportées comme ayant ingéré le médicament., Coverage estimated through the use of population-based survey sampling methods. The denominator is the total number of individuals Survey and the numerator is the total number of individuals Survey who were identified as having ingested the drug.
+Portée du programme :,Programme Reach:
+" le pourcentage de personnes au sein de la zone de recensement à qui le traitement par chimiothérapie a été proposé, indépendamment de l'ingestion ou non du médicament."," The proportion of people in the survey area who were given the opportunity to receive the preventive chemotherapy, regardless of whether the drug was ingested."
+Conformité :,Compliance:
+ pourcentage des personnes au sein de la zone de recensement à qui le médicament a été proposé et qui ont effectivement avalée ledit médicament., The proportion of people in the survey area who are offered the drug that also swallow the drug.
+Unité de mise en œuvre :,Implementation Unit (IU):
+" zone d'étude désignée. Les études de couverture sont généralement menées au niveau du district ; toutefois, dans certains cas, elles peuvent être réalisées au niveau de la province, du pays ou de la zone concernée. "," Designated survey areas. Coverage surveys are typically conducted at the district level; however, in some cases they may be done at the province, county, or zonal level."
+Tableau 1. Résultats de couverture de l'étude pour,Table 1. Survey coverage results for
+Unité de mise en œuvre,Implementation Unit
+Couverture rapportée,Reported Coverage
+Couverture de l'étude,Survey Coverage
+Intervalle de confiance inférieur de 95 %,Lower 95% Confidence Interval
+Intervalle de confiance supérieur de 95 %,Upper 95% Confidence Interval
+Effet du plan,Design Effect
+Portée du programme,Programme Reach
+VALIDATION DE LA COUVERTURE RAPPORTÉE,VALIDATION OF REPORTED COVERAGE
+"Si l'écart entre la ouverture rapportée et la couverture de l'étude n'est pas significative, ou si les deux chiffres sont relativement proches (les résultats sont indiqués en vert), on considère que la couverture de l'étude « valide » la couverture rapportée.","When there is no significant difference between the reported and survey coverage, or when the two figures are relatively close (indicated by the colors in green) then the survey coverage is considered to ""validate"" the reported coverage."
+Tableau 2. L'interprétation des résultats de couverture de l'étude permet de déterminer si la couverture de l'étude valide la couverture rapportée et si le seuil cible est atteint dans chacune des unités de mise en œuvre,"Table 2. Interpretation of survey coverage results to determine if the survey coverage validates the reported coverage and whether the target threshold is met by each IU,"
+". La couleur des cellules indique si une action programmatique est requise (Vert = sur la bonne voie, aucune intervention requise ; Jaune = attention, des améliorations peuvent s'avérer nécessaires ; Rouge = insuffisance, une intervention est requise).",". The coloring of the cells indicates whether programmatic action is required (Green = on track, no action required; Yellow = caution, improvements can be made; Red = inadequate, action is required)."
+Oui ; la couverture de l'étude valide la couverture rapportée,Yes; survey coverage validates reported coverage
+Oui ; la couverture de l'étude et la couverture rapportée sont similaires,Yes; survey and reported coverage are similar
+Non ; la couverture de l'étude est supérieure,No; survey coverage is greater
+Non ; la couverture de l'étude est considérablement supérieure,No; survey coverage is much greater
+Non ; la couverture de l'étude est inférieure,No; survey coverage is less
+Non ; la couverture de l'étude est considérablement inférieure,No; survey coverage is much less
+Unité de mise en œuvre ,IU
+Écart ,Difference
+La couverture de l'étude et,Survey Coverage &
+sont similaires,are Similar
+La couverture rapportée est comprise dans l'intervalle de confiance de 95 % contournant la couverture de l'étude.  Cela signifie que la couverture rapportée peut être considérée comme « validée » au sein de cette Unité de mise en œuvre ; aucune intervention ou amélioration au système de rapport n'est nécessaire.,"The reported coverage is contained within the 95% confidence interval around the survey coverage.  This means the reported coverage can be considered be ""validated"" in that IU; no action or improvements are required to the reporting system."
+"La couverture rapportée se situe hors de l'intervalle de confiance de 95 % contournant la couverture de l'étude, mais est encore à +/- 10 points de pourcentage de la couverture de l'étude, ce qui indique que le système de rapport fonctionne correctement ; aucune intervention ou amélioration au système de rapport n'est nécessaire.","The reported coverage is outside the 95% confidence interval around the survey coverage but is still within +/- 10 percentage points of the survey coverage, which suggests the reporting system is working well; no action or improvements are required to the reporting system."
+La couverture rapportée se situe entre +/- 10 et 25 points de pourcentage d'écart de la couverture de l'étude.  Cela semble indiquer un éventuel problème au niveau du système de rapport et qu'une intervention peut s'avérer nécessaire si les ressources le permettent.,The reported coverage is between +/- 10 to 25 percentage points different from the survey coverage.  This suggests there could be a problem with the reporting system and action may be required if resources permit.
+La couverture rapportée se situe au moins à +/- 25 points de pourcentage d'écart de la couverture de l'étude. Cela semble indiquer qu'il y a un véritable problème au niveau de la couverture rapportée et qu'une mesure de suivi destinée à améliorer le système de rapport dans l'unité de mise en œuvre est requise.,The reported coverage is at least +/- 25 percentage points different from the survey coverage. This suggests that there is a real problem with the reported coverage and follow-up action to improve the reporting system in the IU is required.
+Conclusion,Conclusion
+Interprétation de la validation,Validation Interpretation
+Interprétation du seuil ,Threshold Interpretation
+La couverture de l'étude est égale ou supérieure au seuil fixé pour la,The surveyed coverage is at or above the threshold for
+La couverture de l'étude est inférieure au seuil fixé pour la,The surveyed coverage is below the threshold for
+Le résultat souhaité serait que la couverture de l'étude se situe dans les 10 % de la couverture rapportée et atteigne le seuil de couverture cible fixé par l'OMS pour la,"The desired outcome is to have the surveyed coverage within 10% of the reported coverage, as well as meet WHO's target coverage threshold for"
+COUVERTURE DE L'ÉTUDE PAR SEXE,SURVEY COVERAGE BY SEX
+Tableau 3. Portée du programme et couverture e l'étude par sexe :,Table 3. Programme reach and survey coverage by sex:
+Tableau 3. Couverture de l'étude par sexe : ,Table 3. Survey coverage by sex:
+Unité de mise en œuvre,Implementation Unit
+% atteint parmi les femmes interrogées (médicament proposé),% Reached amongst females interviewed (offered drug)
+% atteint parmi les hommes interrogés (médicament proposé),% Reached amongst males interviewed (offered drug)
+La portée du programme présente un écart statistique entre les femmes et les hommes,Programme Reach for females statistically different from males
+% traité parmi les femmes interrogées (médicament avalé),% Treated amongst females interviewed (swallowed drug)
+% traité parmi les hommes interrogés (médicament avalé),% Treated amongst males interviewed (swallowed drug)
+La couverture de traitement présente un écart statistique entre les femmes et les hommes,Treatment Coverage for females statistically different from males
+La portée du programme présente un écart statistique entre les femmes et les hommes,Programme Reach for females statistically different from males
+Oui,Yes
+Non,No
+BLEU ,BLUE
+indique que les femmes présentent un pourcentage considérablement supérieur,indicates females had a significantly higher percentage
+ORANGE,ORANGE
+indique que les hommes présentent un pourcentage considérablement supérieur,indicates males had a significantly higher percentage
+Portée du programme par sexe,Programme Reach by Sex
+Portée du programme (%),Programme Reach (%)
+La couverture de l'étude par sexe,Survey Coverage by Sex
+Couverture de l'étude (%),Survey Coverage (%)
+Conformité par sexe ,Compliance by Sex
+Conformité (%),Compliance (%)
+Non-conformité par sexe,Non-Compliance by Sex
+Non-conformité (%),Non-Compliance (%)
+Sexe,Sex
+Non-conformité,Non-Compliance
+Tableau 4. Non-conformité dans l',Table 4. Non-Compliance in
+Annexe A. Interprétation et suivi des résultats de couverture rapportée et de l'étude,Appendix A. Interpreting and following up reported and survey coverage results
+Ce tableau est extrait du document de l'OMS intitulé,"This table is taken from the WHO document,"
+« Coverage Evaluation Surveys for Preventive Chemotherapy: Field Guide for Implementation » ;,"""Coverage Evaluation Surveys for Preventive Chemotherapy: Field Guide for Implementation,"""
+ il sert à aider les utilisateurs à développer leur propre Plan d'action en fonction des résultat d'une ou plusieurs études sur la couverture.   Ce tableau indique les conclusions éventuelles susceptible de survenir lorsque la couverture de l'étude est comparée au seuil de couverture cible et à la couverture rapportée.  Le tableau fournit des causes potentielles à examiner et les mesures correctives possibles., and is intended to help users in developing their own Action Plan as the result of a coverage survey(s).   This table lists the possible findings that can occur when the survey coverage is compared to both the target coverage threshold and the reported coverage.  The table provides potential causes to investigate and corrective actions that can be taken.
+1. Comparaison de la couverture de l'étude au seuil de couverture cible : permet d'obtenir une meilleure estimation de la couverture dans les régions où il y a lieu de croire que les rapports de routine sont incorrects,1. Comparison of survey coverage to target coverage threshold: To get a better estimate of coverage where there is reason to believe routine reporting is incorrect
+La couverture de l'étude est inférieure au seuil de couverture cible,Survey coverage is below the target coverage threshold
+La couverture de l'étude est supérieure au seuil de couverture cible,Survey coverage is above the target coverage threshold
+"Vérifiez la couverture dans les diverses sous-populations pour vous assurer qu'aucun groupe particulier n'est laissé pour compte ou ne présente une couverture inférieure à la moyenne (par ex., les hommes par rapport aux femmes, les enfants en âge de scolarisation, les sous-districts particuliers, les minorités ethniques, etc.)","Check the coverage in the different sub-populations to determine whether any particular group is being left out or has lower than average coverage (e.g., males vs. females, SAC, particular sub-districts, ethnic minorities, etc.)"
+Vérifiez les raisons pour lesquelles le médicament n'a pas été proposé à la population admissible,Check the reasons for why the eligible population was not  offered the drug
+Vérifiez les raisons pour lesquelles la population admissible n'a pas avalé le médicament,Check the reasons for the eligible population not swallowing the drug
+Les communautés et les distributeurs de médicaments font preuve de motivation et le programme fonctionne comme il faut,Communities and drug distributors are motivated and the programme is functioning well
+Développez et mettez en œuvre la mobilisation sociale ciblée suivant les besoins,Develop and implement targeted social mobilization as required
+Examinez les raisons pour lesquelles les sous-populations ne sont par correctement couvertes et effectuez les changements nécessaires au niveau de la stratégie / plateforme du traitement de masse pour atteindre les sous-populations concernées,Investigate the reasons why the sub-population(s) are not adequately covered and make the appropriate change in MDA strategy/platform to reach the sub-population(s)
+Envisagez d'utiliser le processus de surveillance indépendant ou l'outil de surveillance de la couverture avec absorption du traitement de masse lors de la prochaine tournée pour améliorer la couverture,Consider using Independent Monitoring or the Coverage Supervision Tool with MDA mop-up during the next round to improve coverage
+"Définisse les mesures correctives en fonction des raisons données, parmi lesquelles :",Tailor corrective action according to reasons given which include strengthening:
+- la chaîne d'approvisionnement des médicaments,- Drug supply chain
+- la mobilisation sociale et les campagnes d'information et d'éducation (référez-vous aux raisons données par les personnes ayant avalé le médicament),- Social mobilization and information and education campaigns (look at reasons given by those who did swallow the drug)
+- la plateforme de distribution des médicaments utilisée,- Drug delivery platform used
+"- la formation, la supervision et la motivation des distributeurs de médicaments","- Training, supervision and motivation of drug distributors"
+- la communication sur les effets indésirables,- Communication on adverse events
+- l'aptitude du personnel national et / ou du district.,- Capacity of national and/or district level staff
+Félicitez vos équipes.  Maintenez la dynamique du programme en cours pendant l'année à venir pour maintenir les niveaux de couverture,Congratulate your teams.  Sustain programme momentum for the next year to maintain coverage levels
+Conclusion ou observation,Finding or observation
+Causes potentielles à examiner,Potential Causes to Investigate
+Mesure corrective,Corrective action
+2. Comparaison de la couverture de l'étude à la couverture rapportée : Pour vérifier si le système de rapport des données fonctionne convenablement,2. Comparison of survey coverage with reported coverage: To check if the data reporting system is working well
+La couverture rapportée est considérablement supérieure à la couverture de l'étude,Reported coverage is much higher than survey coverage
+"(à savoir, les rapports de routine surestiment probablement la couverture réelle)","(i.e., routine reporting is likely overestimating true coverage)"
+La couverture rapportée est considérablement inférieure à la couverture de l'étude,Reported coverage is much lower than survey coverage
+"(à savoir, les rapports de routine sous-estiment probablement la couverture réelle)","(i.e., routine reporting is likely underestimating true coverage)"
+La couverture rapportée et la couverture de l'étude sont identiques,Reported coverage and survey coverage are similar
+Les distributeurs de médicaments rapportent des résultats erronés quant à l'ingestion des médicaments,Drug distributors are incorrectly reporting on ingestion of the drugs
+"La valeur de la population totale (par ex., le dénominateur) est incorrecte ou dépassée, ou des personnes extérieures à la zone d'étude prennent également les médicaments et sont comptées dans le recensement","The total population figure (e.g.,  the denominator) is incorrect or outdated, or people from outside the survey area are also taking the drugs and are being included in the total treatment tallies"
+"La valeur de la population totale (par ex., le dénominateur) est incorrecte ou dépassée","The total population figure (e.g., the denominator) is incorrect or outdated"
+Les données ne sont pas correctement cumulées ou rapportées,Data are not being correctly aggregated or reported
+Le système de rapport en place est satisfaisant,A good reporting system is in place
+Effectuez une auto-évaluation de la qualité des données ou une évaluation de la qualité des données pour déterminer à quel niveau le système de rapport présente des failles,Conduct a Data Quality Self-Assessment or Data Quality Assessment to diagnose where the data reporting system is breaking down
+Améliorez les compétences et la motivation des distributeurs de médicaments grâce à une meilleure formation et supervision ; envisagez de recourir aux technologies mHealth,Improve the skills and motivation of drug distributors through better training and supervision; consider use of mHealth technologies
+Apportez des améliorations aux feuilles de décompte et / ou aux registres utilisés ,Make improvements to the tally sheets and/or registers used
+Déterminez si des estimations ou projections démographiques plus exactes sont disponibles et appliquez un coefficient de correction aux estimations de couverture de routine suivant les besoins,Determine if more accurate population estimates or projections are available and apply a correction factor to routine coverage estimates as appropriate
+Demandez aux distributeurs de médicaments de noter et de rapporter séparément les personnes non résidentes ayant ingéré les médicaments et ne les comptez pas dans le numérateur pour calculer la couverture CP,Ask the drug distributors to record and report non-resident individuals ingesting the drugs separately and do not include them in the numerator for calculating PC coverage
+Reportez-vous aux mesures correctives données pour le même problème mentionné ci-avant,Refer to corrective actions given for the same problem above
+"Félicitez vos équipes. Continuez d'utiliser le système de rapport actuel en doutant moins de l'exactitude de l'estimation de la couverture CP.  À l'avenir, les études devront générer moins de frais (au moins pour la zone d'étude actuelle).","Congratulate your teams. Continue using the current reporting system, with increased confidence that it provides a good estimate of PC coverage.  Less expenditure in future surveys (at least for the current survey area) is required."
+3. Comparaison de la couverture de l'étude à la portée du programme : Afin d'évaluer la conformité et le succès de la mobilisation sociale et de la stratégie de communication du programme,3. Comparison of survey coverage with programme reach: To assess compliance and the success of the programs social mobilization and communication strategy
+La couverture de l'étude est inférieure à la portée du programme,Survey coverage is less than programme reach
+La couverture de l'étude est supérieure à la portée du programme,Survey coverage is greater than programme reach
+La couverture de l'étude est proche ou égale à la portée du programme,Survey coverage is close to or equal to programme reach
+Vérifiez les raisons données pour expliquer pourquoi les personnes à qui le médicament a été proposé ne l'ont pas avalé,Check the reasons given for why individuals who were offered the drug did not swallow it
+Il se peut qu'il y ait un problème au niveau des données de l'étude sur la couverture.  Vérifiez que l'équipe de l'étude ont correctement exécuté le questionnaire ; recomptez les résultats et vérifiez qu'il n'y a pas d'erreurs arithmétiques,There may be a problem with the coverage survey data.  Check to see if the survey team implemented the questionnaire correctly; recount results and check for arithmetic errors
+Le niveau de conformité est élevé,Compliance is high
+L'amélioration des campagnes d'information et d'éducation peut s'avérer nécessaire avant le prochain cycle pour augmenter le niveau de conformité,Improved information and education campaigns may be needed prior to the next round to increase compliance
+"Une meilleure formation peut s'avérer nécessaire pour s'assurer que l'équipe de l'étude comprend correctement la différence entre un médicament proposé et un médicament avalé, et que cette différence soit correctement expliquée aux personnes interrogées",Greater training may be needed to make sure the survey team correctly understands the difference between being offered the drug(s) and swallowing the drugs and that this difference is conveyed correctly to the respondents
+Félicitez les équipes. Continuez d'utiliser les campagnes d'information et d'éducation en cours étant donné qu'elles semblent être efficaces,"Congratulate the teams. Continue with the current information and education campaigns, as they appear to be working"
+"Validé,",Validated
+Efficace,Good
+Attention,Caution
+Intervention requise,Action Required
+La couverture rapportée est comprise dans l'intervalle de confiance de 95 % contournant la couverture de l'étude.  Cela signifie que la couverture rapportée peut être considérée comme « validée » au sein de cette Unité de mise en œuvre ; aucune intervention ou amélioration au système de rapport n'est nécessaire.,The reported coverage is contained within the 95% confidence interval around the survey coverage.  This means the reported coverage can be considered be “validated” in that Implementation Unit; no action or improvements are required to the reporting system.
+"La couverture rapportée se situe hors de l'intervalle de confiance de 95 % contournant la couverture de l'étude, mais est encore à +/- 10 points de pourcentage de la couverture de l'étude, ce qui indique que le système de rapport fonctionne correctement ; aucune intervention ou amélioration au système de rapport n'est nécessaire.","The reported coverage is outside the 95% confidence interval around the survey coverage but is still within +/- 10 percentage points of the survey coverage, which suggests the reporting system is working well; no action or improvements are required to the reporting system."
+La couverture rapportée se situe entre +/- 10 et 25 points de pourcentage d'écart de la couverture de l'étude.  Cela semble indiquer un éventuel problème au niveau du système de rapport et qu'une intervention peut s'avérer nécessaire si les ressources le permettent.,The reported coverage is between +/- 10 to 25 percentage points different from the survey coverage.  This suggests there could be a problem with the reporting system and action may be required if resources permit.
+La couverture rapportée se situe au moins à +/- 25 points de pourcentage d'écart de la couverture de l'étude. Cela semble indiquer qu'il y a un véritable problème au niveau de la couverture rapportée et qu'une mesure de suivi destinée à améliorer le système de rapport dans l'unité de mise en œuvre est requise.,The reported coverage is at least +/- 25 percentage points different from the survey coverage. This suggests that there is a real problem with the reported coverage and follow-up action to improve the reporting system in the Implementation Unit is required.

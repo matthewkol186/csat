@@ -31,18 +31,20 @@ library(PropCIs)
 library(dplyr)
 
 source("R/check_data_validity.R")
+source("R/internationalization.R")
 
 #Purpose: Give a visual output of CSA Tool for easier interpretation
 
 wordDocCSB <- function() {
         dat <- read_csv(csv_url)
-        doc <- analyzeDataCSB(dat)
+        vocab <- translation_map()
+        doc <- analyzeDataCSB(dat, vocab)
         return(doc)
 }
 
 # set Using either analyzeData1 or analyzeData2 if reported coverage is measured or not
 
-analyzeDataCSB<- function(dat) {
+analyzeDataCSB<- function(dat, vocab) {
 
         #-------------------------------------------------------------------------------------------#
         #Creating variable to change title of document for Country, Implementation Unit, & Disease  #
@@ -58,7 +60,7 @@ analyzeDataCSB<- function(dat) {
 
         #Checking to make sure the drug packages are selected with the appropriate disease
         if (!checkDiseaseDrugMatch(disease, drug)){
-          stop("The drug/drug package selected is not used in treatment for the disease selected")
+          stop(i18n("The drug/drug package selected is not used in treatment for the disease selected", language, vocab))
         }
 
         sub_num<-as.numeric(number_of_subunits)
@@ -119,7 +121,7 @@ analyzeDataCSB<- function(dat) {
                 if (colnames(version_check)[b] == version_col_names[b] | colnames(version_check)[b] == version_col_names2[b]){
 
                 }else{
-                        stop("Dataset uploaded does not match the most recent version of the Coverage Survey Builder output. Please copy and paste the following URL (https://www.ntdsupport.org/resources/coverage-survey-builder-coverage-evaluations) into your browser, or utilize the template provided on this website.")
+                        stop(i18n("Dataset uploaded does not match the most recent version of the Coverage Survey Builder output. Please copy and paste the following URL (https://www.ntdsupport.org/resources/coverage-survey-builder-coverage-evaluations) into your browser, or utilize the template provided on this website.", language, vocab))
                 }
         }
 
@@ -138,7 +140,7 @@ analyzeDataCSB<- function(dat) {
         for (r in 1:dim(datcheck)[1]){
                 for (c in 1:dim(datcheck)[2]){
                         if(!is.numeric(datcheck[r,c]) | is.na(datcheck[r,c])){
-                                stop(paste("There is a non-numeric or blank value where a numeric value is expected. Please look through your file to check for an error."))
+                                stop(paste(i18n("There is a non-numeric or blank value where a numeric value is expected. Please look through your file to check for an error.", language, vocab)))
                         }
                 }
         }
@@ -154,29 +156,29 @@ analyzeDataCSB<- function(dat) {
         #Female
 
                 if (dat2$Females_Offered[a] > dat2$Females_Interviewed[a]){
-                        stop("One or more of the subunits has more females offered the drug than interviewed")
+                        stop(i18n("One or more of the subunits has more females offered the drug than interviewed"), language, vocab)
                 }
 
                 if (dat2$Females_Swallowed[a] > dat2$Females_Interviewed[a]){
-                        stop("One or more of the subunits has more females swallowing the drug than interviewed")
+                        stop(i18n("One or more of the subunits has more females swallowing the drug than interviewed"), language, vocab)
                 }
 
                 if (dat2$Females_Swallowed[a] > dat2$Females_Offered[a]){
-                        stop("One or more of the subunits has more females swallowing the drug than offered")
+                        stop(i18n("One or more of the subunits has more females swallowing the drug than offered"), language, vocab)
                 }
 
         #Male
 
                 if (dat2$Males_Offered[a] > dat2$Males_Interviewed[a]){
-                        stop("One or more of the subunits has more males offered the drug than interviewed")
+                        stop(i18n("One or more of the subunits has more males offered the drug than interviewed"), language, vocab)
                 }
 
                 if (dat2$Males_Swallowed[a] > dat2$Males_Interviewed[a]){
-                        stop("One or more of the subunits has more males swallowing the drug than interviewed")
+                        stop(i18n("One or more of the subunits has more males swallowing the drug than interviewed"), language, vocab)
                 }
 
                 if (dat2$Males_Swallowed[a] > dat2$Males_Offered[a]){
-                        stop("One or more of the subunits has more males swallowing the drug than offered")
+                        stop(i18n("One or more of the subunits has more males swallowing the drug than offered"), language, vocab)
                 }
 
         }
@@ -184,15 +186,15 @@ analyzeDataCSB<- function(dat) {
         dat2<-dat2[complete.cases(dat2),]
 
         if (exists("r_coverage")){
-                doc<-try(analyzeData1(dat2, country, IU, disease, drug, r_coverage, sub_num))
+                doc<-try(analyzeData1(dat2, country, IU, disease, drug, r_coverage, sub_num, vocab))
         } else{
-                doc<-try(analyzeData2(dat2, country, IU, disease, drug, sub_num))
+                doc<-try(analyzeData2(dat2, country, IU, disease, drug, sub_num, vocab))
         }
         return(doc)
 
 }
 
-analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
+analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num, vocab, lang='en'){
 
 
         #Creating vector that houses the colors for males and females for figures
@@ -211,10 +213,12 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         thresh = setDiseaseThreshold(disease)
 
         if (disease=="Onchocerciasis" | disease=="Lymphatic Filariasis") {
-                threshcol<-"Meets or Exceeds the \n Target 65% Threshold"
+          threshcol<-paste(i18n("Meets or Exceeds", language, vocab), "\n",
+                                 i18n("the Target 65% Threshold", language, vocab))
         } else if (disease=="Trachoma") {
-                threshcol<-"Meets or Exceeds the \n Target 80% Threshold"
-        } else threshcol<-"Meets or Exceeds the \n Target 75% Threshold" #Value for STH and Schistosomiasis
+          threshcol<-paste(i18n("Meets or Exceeds", language, vocab), "\n",
+                           i18n("the Target 75% Threshold", language, vocab))
+        } else threshcol<-paste(i18n("Meets or Exceeds", language, vocab), "\n", i18n("the Target 80% Threshold", language, vocab)) #Value for STH and Schistosomiasis
 
         #first add columns for number not swallowed and not offered
         dat2$Females_Noswallow<-dat2$Females_Interviewed - dat2$Females_Swallowed
@@ -382,6 +386,9 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         female_pr2 = c(final[2:2,1:1],final[2:2,2:2] ,final[2:2,3:3])
         final_3 = data.frame(total_pr2, male_pr2, female_pr2)
 
+        x_overall_male_female = c(i18n("Overall", language, vocab),
+                                  i18n("Male", language, vocab),
+                                  i18n("Female", language, vocab))
         plot1<- ggplot(data=final_3*100, aes(x=c(5,15,25), y=c(total_pr2[1:1],male_pr2[1:1],female_pr2[1:1])))+
                 geom_errorbar(aes(ymin=c(total_pr2[2:2],male_pr2[2:2], female_pr2[2:2]),
                                   ymax=c(total_pr2[3:3],male_pr2[3:3], female_pr2[3:3])),
@@ -390,10 +397,10 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                 geom_point(shape=c(21,24,22),fill=c("#000000","#FF9F33","#428EFC"),
                            stat="identity",color=c("black","black","black"),size=3)+
                 xlab("")+
-                ylab(paste("Proportion of respondents who reported being offered \n",drug)) +
-                ggtitle("Estimated Programme Reach by Gender")+
+                ylab(paste(i18n("Proportion of respondents who reported being offered", language, vocab), "\n",drug)) +
+                ggtitle(i18n("Estimated Programme Reach by Gender", language, vocab))+
                 theme(plot.title = element_text(hjust = 0.5, size=16))+
-                scale_x_continuous(breaks = c(5,15,25), limits = c(0, 30), labels=c("Overall","Male","Female"))+
+                scale_x_continuous(breaks = c(5,15,25), limits = c(0, 30), labels=c(i18n("Overall", language, vocab),i18n("Male", language, vocab),i18n("Female", language, vocab)))+
                 theme(
                         panel.grid.major.x=element_blank(),
                         panel.grid.minor.x=element_blank(),
@@ -407,7 +414,8 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                 geom_text(label=paste(format(round(total_pr2[1:1]*100,1),nsmall=1),"%"), x=3, y=total_pr2[1:1]*100)+
                 geom_text(label=paste(format(round(male_pr2[1:1]*100,1),nsmall=1),"%"), x=13, y=male_pr2[1:1]*100)+
                 geom_text(label=paste(format(round(female_pr2[1:1]*100,1),nsmall=1), "%"), x=23, y=female_pr2[1:1]*100)+
-                scale_color_discrete(breaks="WHO \nTarget \nCoverage \nThreshold")
+                scale_color_discrete(breaks=paste(i18n("WHO", language, vocab),i18n("Target", language, vocab),
+                                                  i18n("Coverage", language, vocab), i18n("Threshold", language, vocab), sep="\n"))
 
         plot1
 
@@ -427,8 +435,10 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         lowci<-final_2[2,1]*100
         upci<-final_2[3,1]*100
 
+        cov_thresh_sentence = paste(i18n("WHO", language, vocab),i18n("Target", language, vocab),
+                                    i18n("Coverage", language, vocab), i18n("Threshold", language, vocab), sep="\n")
         plot2<- ggplot(data=final_2*100, aes(x=c(5,15,25), y=c(total_sc2[1:1],male_sc2[1:1],female_sc2[1:1])))+
-                geom_hline(aes(yintercept=thresh, linetype="WHO \nTarget \nCoverage \nThreshold"),
+                geom_hline(aes(yintercept=thresh, linetype=cov_thresh_sentence),
                            color="red3")+
                 geom_errorbar(aes(ymin=c(total_sc2[2:2],male_sc2[2:2], female_sc2[2:2]),
                                   ymax=c(total_sc2[3:3],male_sc2[3:3],female_sc2[3:3])),
@@ -439,10 +449,11 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                 xlab("")+
                 geom_point(aes(5,r_coverage), color='black', size=2, shape=8)+       #Y-value will need to be pulled from the information the user enters on the homepage of the tool. Create a variable that will change the value of 90 based on this number
                 geom_text(label='\nReported \nCoverage', x=8, y=r_coverage, size=3)+   #Y-value will need to be pulled from the information the user enters on the homepage of the tool. Create a variable that will change the value of 90 based on this number
-                ylab(paste("Proportion of respondents who reported swallowing \n",drug)) +
-                ggtitle("Estimated Survey Coverage by Gender")+
+                ylab(paste(i18n("Proportion of respondents who reported swallowing", language, vocab),
+                           "\n", drug, sep='')) +
+                ggtitle(i18n("Estimated Survey Coverage by Gender", language, vocab))+
                 theme(plot.title = element_text(hjust = 0.5, size=16))+
-                scale_x_continuous(breaks = c(5,15,25), limits = c(0, 30), labels=c("Overall","Male", "Female"))+
+                scale_x_continuous(breaks = c(5,15,25), limits = c(0, 30), labels=c(i18n("Overall", language, vocab),i18n("Male", language, vocab), i18n("Female", language, vocab)))+
                 theme(
                         panel.grid.major.x=element_blank(),
                         panel.grid.minor.x=element_blank(),
@@ -456,7 +467,7 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                 geom_text(label=paste(format(round(total_sc2[1:1]*100,1),nsmall=1),"%"), x=3, y=total_sc2[1:1]*100)+
                 geom_text(label=paste(format(round(male_sc2[1:1]*100,1),nsmall=1),"%"), x=13, y=male_sc2[1:1]*100)+
                 geom_text(label=paste(format(round(female_sc2[1:1]*100,1),nsmall=1), "%"), x=23, y=female_sc2[1:1]*100)+
-                scale_color_discrete(breaks="WHO \nTarget \nCoverage \nThreshold") #Only allows "WHO"
+                scale_color_discrete(breaks=cov_thresh_sentence) #Only allows "WHO"
 
         plot2
 
@@ -517,7 +528,7 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
         #Confidence intervals for clusters/subunits in single district analysis
 
-        dat_treat.conf.lim<-dat2[,c("Interviewed","Swallowed","Subunit")]
+        dat_treat.conf.lim<-dat2[,c("Interviewed", "Swallowed", "Subunit")]
 
         dat_treat.conf.lim$uci<-0
         dat_treat.conf.lim$lci<-0
@@ -540,15 +551,16 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
 
         plot5<- ggplot(data=dat_treat.conf.lim, aes(x=Subunit, y=Treated))+
-                geom_hline(aes(yintercept=thresh, linetype="WHO \nTarget \nCoverage \nThreshold"),
+                geom_hline(aes(yintercept=thresh, linetype=cov_thresh_sentence),
                            color="red3")+
                 geom_point(stat="identity")+
                 geom_errorbar(aes(ymin=dat_treat.conf.lim$uci, ymax=dat_treat.conf.lim$lci),
                               width=.2,
                               position=position_dodge(.9))+
-                xlab("Cluster")+
-                ylab(paste("Proportion of respondents who reported swallowing \n",drug)) +
-                ggtitle("Plot of Survey Coverage by Subunit: Greatest to Least Coverage") +
+                xlab(i18n("Cluster", language, vocab))+
+                ylab(paste(i18n("Proportion of respondents who reported swallowing", language, vocab),
+                           "\n", drug, sep='')) +
+                ggtitle(i18n("Plot of Survey Coverage by Subunit: Greatest to Least Coverage", language, vocab)) +
                 theme(
                         plot.title = element_text(hjust = 0.5, size=12, face="bold"),
                         legend.title = element_blank(),
@@ -589,7 +601,8 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         #Title page #
         #-----------#
 
-        titlepg<-pot(paste(disease, "Coverage Evaluation Results Summary:", IU,",", country,",", format(Sys.time(), '%B %Y')),
+        titlepg<-pot(paste(disease, i18n("Coverage Evaluation Results Summary:", language, vocab),
+                           IU,",", country,",", format(Sys.time(), '%B %Y')),
                      textProperties(font.weight = "bold", font.family = "Calibri",
                                     font.size = 20))
         titlepg
@@ -597,10 +610,10 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         doc<-addParagraph(doc, titlepg)
         doc <- addParagraph( doc, '', stylename = 'Normal' )
 
-        sumsent<- pot("This summary reviews the results from coverage evaluation surveys for ",
+        sumsent<- pot(paste(i18n("This summary reviews the results from coverage evaluation surveys for", language, vocab), ' '),
                       textProperties(font.family = "Calibri"))+
                 pot(drug, textProperties(font.weight = "bold", font.family = "Calibri"))+
-                pot(" that were conducted in ",textProperties(font.family = "Calibri"))+
+                pot(paste(i18n(" that were conducted in", language, vocab), ""),textProperties(font.family = "Calibri"))+
                 pot(IU, textProperties(font.weight = "bold", font.family = "Calibri"))+
                 pot(", ", textProperties(font.weight = "bold", font.family = "Calibri"))+
                 pot(country, textProperties(font.weight = "bold", font.family = "Calibri"))+
@@ -611,28 +624,28 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         doc<-addParagraph(doc, sumsent)
         doc <- addParagraph( doc, '', stylename = 'Normal' )
 
-        kt<-pot("Key Terms", textProperties(underlined = TRUE, font.family = "Calibri"))
+        kt<-pot(i18n("Key Terms", language, vocab), textProperties(underlined = TRUE, font.family = "Calibri"))
 
         doc<-addParagraph(doc, kt)
         doc <- addParagraph( doc, '', stylename = 'Normal' )
 
 
-        rc<-pot("Reported Coverage-", textProperties(font.weight = "bold", font.family = "Calibri"))+
-                pot(" The coverage calculated from data reported by all drug distributors, with census figures or drug distributor reports used to estimate the population denominator.",
+        rc<-pot(i18n("Reported Coverage:", language, vocab), textProperties(font.weight = "bold", font.family = "Calibri"))+
+                pot(i18n(" The coverage calculated from data reported by all drug distributors, with census figures or drug distributor reports used to estimate the population denominator.", language, vocab),
                     textProperties(font.family = "Calibri"))
 
         doc <- addParagraph( doc, rc)
         doc <- addParagraph( doc, '', stylename = 'Normal' )
 
-        sc<-pot("Survey Coverage-", textProperties(font.weight = "bold", font.family = "Calibri"))+
-                pot(" Coverage estimated through the use of population-based survey sampling methods. The denominator is the total number of individuals Survey and the numerator is the total number of individuals Survey who were identified as having ingested the drug.",
+        sc<-pot(i18n("Survey Coverage:", language, vocab), textProperties(font.weight = "bold", font.family = "Calibri"))+
+                pot(i18n(" Coverage estimated through the use of population-based survey sampling methods. The denominator is the total number of individuals Survey and the numerator is the total number of individuals Survey who were identified as having ingested the drug.", language, vocab),
                     textProperties(font.family = "Calibri"))
 
         doc <- addParagraph( doc, sc)
         doc <- addParagraph( doc, '', stylename = 'Normal' )
 
-        pr<-pot("Programme Reach-", textProperties(font.weight = "bold", font.family = "Calibri"))+
-                pot(" The proportion of people in the survey area who were given the opportunity to receive the preventive chemotherapy, regardless of whether the drug was ingested.",
+        pr<-pot(i18n("Programme Reach:", language, vocab), textProperties(font.weight = "bold", font.family = "Calibri"))+
+                pot(i18n(" The proportion of people in the survey area who were given the opportunity to receive the preventive chemotherapy, regardless of whether the drug was ingested.", language, vocab),
                     textProperties(font.family = "Calibri"))
 
         doc <- addParagraph( doc, pr)
@@ -645,8 +658,8 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         doc<-addParagraph(doc, com)
         doc <- addParagraph( doc, '', stylename = 'Normal' )
 
-        iudef<-pot("Implementation Unit (IU)-", textProperties(font.weight = "bold", font.family = "Calibri"))+
-                pot(" Designated survey areas. Coverage surveys are typically conducted at the district level; however, in some cases they may be done at the province, county, or zonal level.",
+        iudef<-pot(i18n("Implementation Unit (IU):", language, vocab), textProperties(font.weight = "bold", font.family = "Calibri"))+
+                pot(i18n(" Designated survey areas. Coverage surveys are typically conducted at the district level; however, in some cases they may be done at the province, county, or zonal level.", language, vocab),
                     textProperties(font.family = "Calibri"))
 
         doc<-addParagraph(doc, iudef)
@@ -674,7 +687,7 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         # Inserting Survey coverage results by district table                #
         #--------------------------------------------------------------------#
 
-        table1<-pot(paste("Table 1. Survey coverage results for",IU,",",
+        table1<-pot(paste(i18n("Table 1. Survey coverage results for", language, vocab),IU,",",
                           country, ",",format(Sys.time(), "%Y"),"."),
                     textProperties(font.family = "Calibri",
                                    font.weight = "bold"))
@@ -698,9 +711,9 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
                 #Renaming the columns
 
-                colnames(surcovDF) <- c("Implementation Unit", "Reported Coverage","Survey Coverage",
-                                        "Lower 95% Confidence Interval", "Upper 95% Confidence Interval",
-                                        "Design Effect", "Programme Reach")
+                colnames(surcovDF) <- c(i18n("Implementation Unit", language, vocab), i18n("Reported Coverage", language, vocab),i18n("Survey Coverage", language, vocab),
+                                        i18n("Lower 95% Confidence Interval", language, vocab), i18n("Upper 95% Confidence Interval", language, vocab),
+                                        i18n("Design Effect", language, vocab), i18n("Programme Reach", language, vocab))
 
                 #Creating the flextable in order to allow for conditional colorization
 
@@ -721,9 +734,9 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
                 #Renaming the columns
 
-                colnames(surcovDF) <- c("Implementation Unit", "Reported Coverage","Survey Coverage",
-                                        "Lower 95% Confidence Interval", "Upper 95% Confidence Interval",
-                                        "Design Effect")
+                colnames(surcovDF) <- c(i18n("Implementation Unit", language, vocab), i18n("Reported Coverage", language, vocab),i18n("Survey Coverage", language, vocab),
+                                        i18n("Lower 95% Confidence Interval", language, vocab), i18n("Upper 95% Confidence Interval", language, vocab),
+                                        i18n("Design Effect", language, vocab))
 
                 #Creating the flextable in order to allow for conditional colorization
 
@@ -748,19 +761,19 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
         if (exists("r_coverage") & length(r_coverage)!=0){
 
-                titlervs<-pot(value = "VALIDATION OF REPORTED COVERAGE", format=title.font)
+                titlervs<-pot(value = i18n("VALIDATION OF REPORTED COVERAGE", language, vocab), format=title.font)
 
                 doc<-addParagraph(doc, titlervs)
 
-                valdef<-pot("When there is no significant difference between the reported and survey coverage, or when the two figures are relatively close (indicated by the colors in green) then the survey coverage is considered to “validate” the reported coverage.",
+                valdef<-pot(i18n("When there is no significant difference between the reported and survey coverage, or when the two figures are relatively close (indicated by the colors in green) then the survey coverage is considered to \"validate\" the reported coverage.", language, vocab),
                             textProperties(font.family = "Calibri"))
 
                 doc<-addParagraph(doc, valdef)
 
                 doc<- addParagraph( doc, '', stylename = 'Normal' )
 
-                table2<-pot(paste("Table 2. Interpretation of survey coverage results to determine if the survey coverage validates the reported coverage and whether the target threshold is met by each IU,",
-                                  country,",", format(Sys.time(), "%Y"),". The coloring of the cells indicates whether programmatic action is required (Green = on track, no action required; Yellow = caution, improvements can be made; Red = inadequate, action is required)."),
+                table2<-pot(paste(i18n("Table 2. Interpretation of survey coverage results to determine if the survey coverage validates the reported coverage and whether the target threshold is met by each IU,", language, vocab),
+                                  country,",", format(Sys.time(), "%Y"),i18n(". The coloring of the cells indicates whether programmatic action is required (Green = on track, no action required; Yellow = caution, improvements can be made; Red = inadequate, action is required).", language, vocab)),
                             textProperties(font.family = "Calibri",
                                            font.weight = "bold"))
 
@@ -780,22 +793,23 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
                         #Adding interpretations for the difference beween surveyed and reported coverage
 
-                        diffDF$interp<-ifelse(lowci<= r_coverage & r_coverage<= upci, "Yes; survey coverage validates \n reported coverage",
-                                              ifelse(abs(diffDF[,4])>=0 & abs(diffDF[,4])<=10,"Yes; survey and reported coverage are similar",
-                                                     ifelse (diffDF[,4]>10 & diffDF[,4]<= 25, "No; survey coverage is greater",
-                                                             ifelse(diffDF[,4]>25,"No; survey coverage is much greater",
-                                                                    ifelse(diffDF[,4]>-25 & diffDF[,4]<= -10, "No; survey coverage is less",
-                                                                           "No; survey coverage is much less")))))
+                        diffDF$interp<-ifelse(lowci<= r_coverage & r_coverage<= upci, i18n("Yes; survey coverage validates reported coverage", language, vocab),
+                                              ifelse(abs(diffDF[,4])>=0 & abs(diffDF[,4])<=10,i18n("Yes; survey and reported coverage are similar", language, vocab),
+                                                     ifelse (diffDF[,4]>10 & diffDF[,4]<= 25, i18n("No; survey coverage is greater", language, vocab),
+                                                             ifelse(diffDF[,4]>25,i18n("No; survey coverage is much greater", language, vocab),
+                                                                    ifelse(diffDF[,4]>-25 & diffDF[,4]<= -10, i18n("No; survey coverage is less", language, vocab),
+                                                                           i18n("No; survey coverage is much less", language, vocab))))))
 
 
                         #Adding interpretations for the difference beween surveyed and reported coverage
 
-                        diffDF$comp_thresh<-ifelse(total_sc[1]*100>=thresh, "Yes","No")
+                        diffDF$comp_thresh<-ifelse(total_sc[1]*100>=thresh, i18n("Yes", language, vocab),i18n("No", language, vocab))
 
                         #Renaming the columns
 
-                        colnames(diffDF) <- c("IU", "Survey Coverage","Reported Coverage","Difference",
-                                               "Survey Coverage & \n Reported Coverage \n are Similar",
+                        colnames(diffDF) <- c(i18n("IU", language, vocab), i18n("Survey Coverage", language, vocab),i18n("Reported Coverage", language, vocab),i18n("Difference", language, vocab),
+                                               paste(i18n("Survey Coverage &", language, vocab), i18n("Reported Coverage", language, vocab),
+                                                     i18n("are Similar", language, vocab), sep='\n'),
                                                threshcol)
 
                         #Creating the flextable in order to allow for conditional colorization
@@ -814,7 +828,7 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                         #                      value ="Reported vs. Survey Coverage", colspan = 6,
                         #                      cell.properties = cellProperties(background.color = "#D4D6D8"), first = TRUE)
 
-                        vars<-"Difference"
+                        vars<-i18n("Difference", language, vocab)
 
                         #Cutoff points were just chosen from the example output, can easily be changed
 
@@ -827,8 +841,8 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                         varsint<-threshcol
 
                         for (w in varsint) {
-                                diffFT[diffDF[w]=="Yes", 6] = cellProperties( background.color = "#0DCF00" )
-                                diffFT[diffDF[w]=="No", 6] = cellProperties( background.color = "#FF0000")
+                                diffFT[diffDF[w]==i18n("Yes", language, vocab), 6] = cellProperties( background.color = "#0DCF00" )
+                                diffFT[diffDF[w]==i18n("No", language, vocab), 6] = cellProperties( background.color = "#FF0000")
                         }
 
                         diffFT
@@ -844,14 +858,14 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                 #Making the table that explains the interpretations of the RvsS data    #
                 #-----------------------------------------------------------------------#
 
-                Conclusion<-c("Yes; survey coverage validates reported coverage", "Yes; survey and reported coverage are similar", "No; survey coverage is...", "No; survey coverage is much...")
-                Interpretation<-c("The reported coverage is contained within the 95% confidence interval around the survey coverage.  This means the reported coverage can be considered be “validated” in that IU; no action or improvements are required to the reporting system.",
-                                  "The reported coverage is outside the 95% confidence interval around the survey coverage but is still within ± 10 percentage points of the survey coverage, which suggests the reporting system is working well; no action or improvements are required to the reporting system.",
-                                  "The reported coverage is between ± 10 to 25 percentage points different from the survey coverage.  This suggests there could be a problem with the reporting system and action may be required if resources permit.",
-                                  "The reported coverage is at least ± 25 percentage points different from the survey coverage. This suggests that there is a real problem with the reported coverage and follow-up action to improve the reporting system in the IU is required.")
+                Conclusion<-c(i18n("Yes; survey coverage validates reported coverage", language, vocab), i18n("Yes; survey and reported coverage are similar", language, vocab), "No; survey coverage is...", "No; survey coverage is much...")
+                Interpretation<-c(i18n("The reported coverage is contained within the 95% confidence interval around the survey coverage.  This means the reported coverage can be considered be \"validated\" in that IU; no action or improvements are required to the reporting system.", language, vocab),
+                                  i18n("The reported coverage is outside the 95% confidence interval around the survey coverage but is still within +/- 10 percentage points of the survey coverage, which suggests the reporting system is working well; no action or improvements are required to the reporting system.", language, vocab),
+                                  i18n("The reported coverage is between +/- 10 to 25 percentage points different from the survey coverage.  This suggests there could be a problem with the reporting system and action may be required if resources permit.", language, vocab),
+                                  i18n("The reported coverage is at least +/- 25 percentage points different from the survey coverage. This suggests that there is a real problem with the reported coverage and follow-up action to improve the reporting system in the IU is required.", language, vocab))
 
                 difkeyDF<-data.frame(Conclusion, Interpretation)
-                colnames(difkeyDF)<-c("Conclusion","Validation Interpretation")
+                colnames(difkeyDF)<-c(i18n("Conclusion", language, vocab),i18n("Validation Interpretation", language, vocab))
 
                 difkeyFT<-FlexTable(difkeyDF, body.par.props = parProperties(padding= 1,
                                                                              text.align = "center"),
@@ -870,12 +884,12 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
                 doc<-addFlexTable(doc, difkeyFT)
 
-                Conclusion2<-c("Yes", "No")
+                Conclusion2<-c(i18n("Yes", language, vocab), i18n("No", language, vocab))
                 Interpretation2<-vector(mode="character",length=2)
 
 
                 threshDF<-data.frame(Conclusion2, Interpretation2)
-                colnames(threshDF)<-c("Conclusion","Threshold Interpretation")
+                colnames(threshDF)<-c(i18n("Conclusion", language, vocab),i18n("Threshold Interpretation", language, vocab))
 
                 threshFT<-FlexTable(threshDF, body.par.props = parProperties(padding= 1,
                                                                              text.align = "center"),
@@ -888,12 +902,12 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                 threshFT[1,1] = cellProperties( background.color = "#0DCF00")
                 threshFT[2,1] = cellProperties( background.color = "#FF0000")
 
-                threshFT[1,2]<-pot("The surveyed coverage is at or above the threshold for ",textProperties(font.family = "Calibri"))+
+                threshFT[1,2]<-pot(paste(i18n("The surveyed coverage is at or above the threshold for", language, vocab), ""),textProperties(font.family = "Calibri"))+
                         pot(disease_name,textProperties(font.family = "Calibri"))+
                         pot(" (",textProperties(font.family = "Calibri"))+
                         pot(thresh,textProperties(font.family = "Calibri"))+
                         pot("%)",textProperties(font.family = "Calibri"))
-                threshFT[2,2]<-pot("The surveyed coverage is below the threshold for ",textProperties(font.family = "Calibri"))+
+                threshFT[2,2]<-pot(paste(i18n("The surveyed coverage is below the threshold for", language, vocab), ""),textProperties(font.family = "Calibri"))+
                         pot(disease_name,textProperties(font.family = "Calibri"))+
                         pot(" (",textProperties(font.family = "Calibri"))+
                         pot(thresh,textProperties(font.family = "Calibri"))+
@@ -907,7 +921,7 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
                 doc<- addParagraph( doc, '', stylename = 'Normal' )
 
-                valthresh<-pot("The desired outcome is to have the surveyed coverage within 10% of the reported coverage, as well as meet WHO's target coverage threshold for ",
+                valthresh<-pot(paste(i18n("The desired outcome is to have the surveyed coverage within 10% of the reported coverage, as well as meet WHO's target coverage threshold for", language, vocab), ""),
                                textProperties(font.family = "Calibri"))+
                         pot(disease,textProperties(font.family = "Calibri"))+
                         pot(".",textProperties(font.family = "Calibri"))
@@ -930,14 +944,14 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         # females and males being offered and/or taking the drug                        #
         #-------------------------------------------------------------------------------#
 
-        title4<-pot(value = "SURVEY COVERAGE BY SEX", format=title.font)
+        title4<-pot(value = i18n("SURVEY COVERAGE BY SEX", language, vocab), format=title.font)
 
         doc<-addParagraph(doc, title4)
         doc<- addParagraph( doc, '', stylename = 'Normal' )
 
         if (exists("Offered", where=dat2)){
 
-                table3<-pot(paste("Table 3. Programme reach and survey coverage by sex:",IU,",",
+                table3<-pot(paste(i18n("Table 3. Programme reach and survey coverage by sex:", language, vocab),IU,",",
                                   country, ",", format(Sys.time(),"%Y"), "."),
                             textProperties(font.family = "Calibri",
                                            font.weight = "bold"))
@@ -1029,10 +1043,10 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         #Fill in cell with 'no' if not statistically significant, otherwise, 'yes'
 
         if (exists("Offered", where=dat2)){
-                cover_sex$compr_male<-ifelse(chi.offer>=.05 ,"No", "Yes")
+                cover_sex$compr_male<-ifelse(chi.offer>=.05 ,i18n("No", language, vocab), i18n("Yes", language, vocab))
         }
 
-        cover_sex$compt_male<-ifelse(chi.swallow>=.05 ,"No", "Yes")
+        cover_sex$compt_male<-ifelse(chi.swallow>=.05 ,i18n("No", language, vocab), i18n("Yes", language, vocab))
 
         #Rearranging columns for aesthetics
 
@@ -1040,12 +1054,12 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
                 cover_sex<-cover_sex[,c(1,2,4,6,3,5,7)]
 
-                colnames(cover_sex) <- c("Implementation Unit", "% Reached amongst females interviewed (offered drug)",
-                                         "% Reached amongst males interviewed (offered drug)",
-                                         "Programme Reach for females statistically different from males",
-                                         "% Treated amongst females interviewed (swallowed drug)",
-                                         "% Treated amongst males interviewed (swallowed drug)",
-                                         "Treatment Coverage for females statistically different from males")
+                colnames(cover_sex) <- c(i18n("Implementation Unit", language, vocab), i18n("% Reached amongst females interviewed (offered drug)", language, vocab),
+                                         i18n("% Reached amongst males interviewed (offered drug)", language, vocab),
+                                         i18n("Programme Reach for females statistically different from males", language, vocab),
+                                         i18n("% Treated amongst females interviewed (swallowed drug)", language, vocab),
+                                         i18n("% Treated amongst males interviewed (swallowed drug)", language, vocab),
+                                         i18n("Treatment Coverage for females statistically different from males", language, vocab))
 
                 covsexFT<-FlexTable(cover_sex, body.par.props = parProperties(padding= 1,
                                                                               text.align = "center"),
@@ -1055,27 +1069,27 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                                                                        font.family = "Calibri"),
                                     body.text.props = textProperties(font.family = "Calibri"))
 
-                vars2<-c("Programme Reach for females statistically different from males",
-                         "Treatment Coverage for females statistically different from males")
+                vars2<-c(i18n("Programme Reach for females statistically different from males", language, vocab),
+                         i18n("Treatment Coverage for females statistically different from males", language, vocab))
 
                 #Filling in the yes/no cell with color based on output
 
                 for (j in vars2) {
-                        covsexFT[cover_sex[, j]== "Yes" & (sum(dat2$Females_Offered/sum(dat2$Females_Interviewed))*100)>(sum(dat2$Males_Offered/sum(dat2$Males_Interviewed))*100), j] = cellProperties( background.color = "#428EFC")
-                        covsexFT[cover_sex[, j]== "Yes" & (sum(dat2$Females_Offered/sum(dat2$Females_Interviewed))*100)<(sum(dat2$Males_Offered/sum(dat2$Males_Interviewed))*100), j] = cellProperties( background.color = "#FF9F33")
-                        covsexFT[cover_sex[, j]== "Yes" & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)>(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#428EFC")
-                        covsexFT[cover_sex[, j]== "Yes" & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)<(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#FF9F33")
-                        covsexFT[cover_sex[, j]== "No", j] = cellProperties( background.color = "#D9DADB")
+                        covsexFT[cover_sex[, j]== i18n("Yes", language, vocab) & (sum(dat2$Females_Offered/sum(dat2$Females_Interviewed))*100)>(sum(dat2$Males_Offered/sum(dat2$Males_Interviewed))*100), j] = cellProperties( background.color = "#428EFC")
+                        covsexFT[cover_sex[, j]== i18n("Yes", language, vocab) & (sum(dat2$Females_Offered/sum(dat2$Females_Interviewed))*100)<(sum(dat2$Males_Offered/sum(dat2$Males_Interviewed))*100), j] = cellProperties( background.color = "#FF9F33")
+                        covsexFT[cover_sex[, j]== i18n("Yes", language, vocab) & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)>(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#428EFC")
+                        covsexFT[cover_sex[, j]== i18n("Yes", language, vocab) & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)<(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#FF9F33")
+                        covsexFT[cover_sex[, j]== i18n("No", language, vocab), j] = cellProperties( background.color = "#D9DADB")
                 }
 
                 covsexFT
 
         } else {
 
-                colnames(cover_sex) <- c("Implementation Unit",
-                                         "% Treated amongst females interviewed (swallowed drug)",
-                                         "% Treated amongst males interviewed (swallowed drug)",
-                                         "Treatment Coverage for females statistically different from males")
+                colnames(cover_sex) <- c(i18n("Implementation Unit", language, vocab),
+                                         i18n("% Treated amongst females interviewed (swallowed drug)", language, vocab),
+                                         i18n("% Treated amongst males interviewed (swallowed drug)", language, vocab),
+                                         i18n("Treatment Coverage for females statistically different from males", language, vocab))
 
                 covsexFT<-FlexTable(cover_sex, body.par.props = parProperties(padding= 1,
                                                                               text.align = "center"),
@@ -1085,14 +1099,14 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                                                                        font.family = "Calibri"),
                                     body.text.props = textProperties(font.family = "Calibri"))
 
-                vars2<-c("Treatment Coverage for females statistically different from males")
+                vars2<-c(i18n("Treatment Coverage for females statistically different from males", language, vocab))
 
                 #Filling in the yes/no cell with color based on output
 
                 for (j in vars2) {
-                        covsexFT[cover_sex[, j]== "Yes" & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)>(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#428EFC")
-                        covsexFT[cover_sex[, j]== "Yes" & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)<(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#FF9F33")
-                        covsexFT[cover_sex[, j]== "No", j] = cellProperties( background.color = "#D9DADB")
+                        covsexFT[cover_sex[, j]== i18n("Yes", language, vocab) & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)>(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#428EFC")
+                        covsexFT[cover_sex[, j]== i18n("Yes", language, vocab) & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)<(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#FF9F33")
+                        covsexFT[cover_sex[, j]== i18n("No", language, vocab), j] = cellProperties( background.color = "#D9DADB")
                 }
 
                 covsexFT
@@ -1100,13 +1114,13 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
         doc<-addFlexTable(doc, covsexFT)
 
-        blue<-pot("BLUE", textProperties(color = "#428EFC", font.weight = "bold", font.family = "Calibri"))+
-                pot(" indicates females had a significantly higher percentage")
+        blue<-pot(i18n("BLUE", language, vocab), textProperties(color = "#428EFC", font.weight = "bold", font.family = "Calibri"))+
+                pot(paste("", i18n("indicates females had a significantly higher percentage", language, vocab)))
 
         doc<-addParagraph(doc, blue)
 
-        green<-pot("ORANGE", textProperties(color = "#FF9F33", font.weight = "bold", font.family = "Calibri"))+
-                pot(" indicates males had a significantly higher percentage")
+        green<-pot(i18n("ORANGE", language, vocab), textProperties(color = "#FF9F33", font.weight = "bold", font.family = "Calibri"))+
+                pot(paste("", i18n("indicates males had a significantly higher percentage", language, vocab)))
 
         doc<-addParagraph(doc, green)
 
@@ -1140,14 +1154,14 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
                 reachplot<-ggplot(meltreach, aes(IU, value, color=variable,
                                                  fill=factor(variable,
-                                                             labels=c("Male",
-                                                                      "Female")),
+                                                             labels=c(i18n("Male", language, vocab),
+                                                                      i18n("Female", language, vocab))),
                                                  width=.5))+
                         geom_bar(position = position_dodge(.5),
                                  stat="identity",colour="#000000", size=0)+
-                        ggtitle("Programme Reach by Sex")+
-                        ylab("Programme Reach (%)")+
-                        xlab("Implementation Unit")+
+                        ggtitle(i18n("Programme Reach by Sex", language, vocab))+
+                        ylab(i18n("Programme Reach (%)", language, vocab))+
+                        xlab(i18n("Implementation Unit", language, vocab))+
                         theme(
                                 legend.position="bottom",
                                 legend.title = element_blank(),
@@ -1172,14 +1186,14 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
         treatplot<-ggplot(melttreat, aes(IU, value, color=variable,
                                          fill=factor(variable,
-                                                     labels=c("Male",
-                                                              "Female")),
+                                                     labels=c(i18n("Male", language, vocab),
+                                                              i18n("Female", language, vocab))),
                                          width=.5))+
                 geom_bar(position = position_dodge(.5),
                          stat="identity",colour="#000000", size=0)+
-                ggtitle("Survey Coverage by Sex")+
-                ylab("Survey Coverage (%)")+
-                xlab("Implementation Unit")+
+                ggtitle(i18n("Survey Coverage by Sex", language, vocab))+
+                ylab(i18n("Survey Coverage (%)", language, vocab))+
+                xlab(i18n("Implementation Unit", language, vocab))+
                 theme(
                         legend.position="bottom",
                         legend.title = element_blank(),
@@ -1225,8 +1239,8 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
                 colnames(sex.compli.df)<-c("sex","compliance","lowerci","upperci")
 
-                sex.compli.df[2,1]<-"Female"
-                sex.compli.df[1,1]<-"Male"
+                sex.compli.df[2,1]<-i18n("Female", language, vocab)
+                sex.compli.df[1,1]<-i18n("Male", language, vocab)
 
                 #Compliance
 
@@ -1259,9 +1273,9 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                                                      width=.5))+
                         geom_bar(position = position_dodge(.5),
                                  stat="identity",colour="#000000", size=0)+
-                        ggtitle("Compliance by Sex")+
-                        ylab("Compliance (%)")+
-                        xlab("Implementation Unit")+
+                        ggtitle(i18n("Compliance by Sex", language, vocab))+
+                        ylab(i18n("Compliance (%)", language, vocab))+
+                        xlab(i18n("Implementation Unit", language, vocab))+
                         theme(
                                 legend.position="bottom",
                                 legend.title = element_blank(),
@@ -1292,8 +1306,8 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
                 colnames(sex.ncompli.df)<-c("sex","ncompli","lowerci","upperci")
 
-                sex.ncompli.df[1,1]<-"Male"
-                sex.ncompli.df[2,1]<-"Female"
+                sex.ncompli.df[1,1]<-i18n("Male", language, vocab)
+                sex.ncompli.df[2,1]<-i18n("Female", language, vocab)
 
                 #Creating data for Non-Compliance plot
 
@@ -1330,9 +1344,9 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                                                            width=.5))+
                         geom_bar(position = position_dodge(.5),
                                  stat="identity",colour="#000000", size=0)+
-                        ggtitle("Non-Compliance by Sex")+
+                        ggtitle(i18n("Non-Compliance by Sex", language, vocab))+
                         ylab("Non-Compliance (%)")+
-                        xlab("Implementation Unit")+
+                        xlab(i18n("Implementation Unit", language, vocab))+
                         theme(
                                 legend.position="bottom",
                                 legend.title = element_blank(),
@@ -1383,7 +1397,7 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                 sexnoncompli<-as.data.frame(sex.ncompli.df)
                 sexnoncompli$IU<-IU
 
-                colnames(sex.ncompli.df) <- c("Sex", "Non-Compliance",
+                colnames(sex.ncompli.df) <- c(i18n("Sex", language, vocab), i18n("Non-Compliance", language, vocab),
                                                  "Lower 95% \n Confidence Interval",
                                                  "Upper 95% \n Confidence Interval")
 
@@ -1395,7 +1409,7 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
                                                                              font.family = "Calibri"),
                                           body.text.props = textProperties(font.family = "Calibri"))
 
-                table4b<-pot(paste("Table 4. Non-Compliance in ",
+                table4b<-pot(paste(i18n("Table 4. Non-Compliance in", language, vocab), "",
                                    IU,",",country, ",", format(Sys.time(),"%Y"), "."),
                              textProperties(font.family = "Calibri",
                                             font.weight = "bold"))
@@ -1413,16 +1427,16 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
         # Appendix A     #
         #----------------#
 
-        title9<-pot("Appendix A. Interpreting and following up reported and survey coverage results",
+        title9<-pot(i18n("Appendix A. Interpreting and following up reported and survey coverage results", language, vocab),
                     textProperties(font.weight = "bold", font.family = "Calibri",
                                    font.size = 16))
 
         doc<-addParagraph(doc, title9)
 
-        apndxpar<-pot("This table is taken from the WHO document,", textProperties(font.family = "Calibri"))+
-                pot("“Coverage Evaluation Surveys for Preventive Chemotherapy: Field Guide for Implementation”",
+        apndxpar<-pot(i18n("This table is taken from the WHO document,", language, vocab), textProperties(font.family = "Calibri"))+
+                pot(i18n("\"Coverage Evaluation Surveys for Preventive Chemotherapy: Field Guide for Implementation,\"", language, vocab),
                     textProperties(font.weight = "bold", font.family = "Calibri"))+
-                pot(" and is intended to help users in developing their own Action Plan as the result of a coverage survey(s).   This table lists the possible findings that can occur when the survey coverage is compared to both the target coverage threshold and the reported coverage.  The table provides potential causes to investigate and corrective actions that can be taken.",
+                pot(i18n(" and is intended to help users in developing their own Action Plan as the result of a coverage survey(s).   This table lists the possible findings that can occur when the survey coverage is compared to both the target coverage threshold and the reported coverage.  The table provides potential causes to investigate and corrective actions that can be taken.", language, vocab),
                     textProperties(font.family = "Calibri"))
 
         doc<- addParagraph(doc, apndxpar)
@@ -1430,29 +1444,26 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
         #Table 1
 
-        finding<-c("1. Comparison of survey coverage to target coverage threshold: To get a better estimate of coverage where there is reason to believe routine reporting is incorrect", "Survey coverage is below the target coverage threshold","","Survey coverage is above the target coverage threshold")
-        potcause<-c("","Check the coverage in the different sub-populations to determine whether any particular group is being left out or has lower than average coverage (e.g., males vs. females, SAC, particular sub-districts, ethnic minorities, etc.)",
-                    "Check the reasons for why the eligible population was not  offered the drug
-
-                    Check the reasons for the eligible population not swallowing the drug",
-                    "Communities and drug distributors are motivated and the programme is functioning well")
-        corrective<-c("","Develop and implement targeted social mobilization as required
-
-                      Investigate the reasons why the sub-population(s) are not adequately covered and make the appropriate change in MDA strategy/platform to reach the sub-population(s)
-
-                      Consider using Independent Monitoring or the Coverage Supervision Tool with MDA mop-up during the next round to improve coverage",
-                      "Tailor corrective action according to reasons given which include strengthening:
-                      - Drug supply chain
-                      - Social mobilization and information and education campaigns (look at reasons given by those who did swallow the drug)
-                      - Drug delivery platform used
-                      - Training, supervision and motivation of drug distributors
-                      - Communication on adverse events
-                      - Capacity of national and/or district level staff",
-                      "Congratulate your teams.  Sustain programme momentum for the next year to maintain coverage levels")
+        finding<-c(i18n("1. Comparison of survey coverage to target coverage threshold: To get a better estimate of coverage where there is reason to believe routine reporting is incorrect", language, vocab), i18n("Survey coverage is below the target coverage threshold", language, vocab),"",i18n("Survey coverage is above the target coverage threshold", language, vocab))
+        potcause<-c("",i18n("Check the coverage in the different sub-populations to determine whether any particular group is being left out or has lower than average coverage (e.g., males vs. females, SAC, particular sub-districts, ethnic minorities, etc.)", language, vocab),
+                    paste(i18n("Check the reasons for why the eligible population was not  offered the drug", language, vocab), "\n",
+                    i18n("Check the reasons for the eligible population not swallowing the drug", language, vocab), sep=""),
+                    i18n("Communities and drug distributors are motivated and the programme is functioning well", language, vocab))
+        corrective<-c("",paste(i18n("Develop and implement targeted social mobilization as required", language, vocab),"\n",
+                               i18n("Investigate the reasons why the sub-population(s) are not adequately covered and make the appropriate change in MDA strategy/platform to reach the sub-population(s)", language, vocab), "\n",
+                               i18n("Consider using Independent Monitoring or the Coverage Supervision Tool with MDA mop-up during the next round to improve coverage", language, vocab),"\n", sep=""),
+                      paste(i18n("Tailor corrective action according to reasons given which include strengthening:", language, vocab),
+                            i18n("- Drug supply chain", language, vocab),
+                            i18n("- Social mobilization and information and education campaigns (look at reasons given by those who did swallow the drug)", language, vocab),
+                            i18n("- Drug delivery platform used", language, vocab),
+                            i18n("- Training, supervision and motivation of drug distributors", language, vocab),
+                            i18n("- Communication on adverse events", language, vocab),
+                            i18n("- Capacity of national and/or district level staff", language, vocab), sep="\n"),
+                      i18n("Congratulate your teams.  Sustain programme momentum for the next year to maintain coverage levels", language, vocab))
 
         apndxA1DF<-data.frame(finding,potcause,corrective)
 
-        colnames(apndxA1DF)<-c("Finding or observation", "Potential Causes to Investigate", "Corrective action")
+        colnames(apndxA1DF)<-c(i18n("Finding or observation", language, vocab), i18n("Potential Causes to Investigate", language, vocab), i18n("Corrective action", language, vocab))
 
         apndxA1FT<-FlexTable(apndxA1DF, body.par.props = parProperties(padding= 1),
                              header.par.props = parProperties(padding = 3,
@@ -1474,32 +1485,26 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
         #Table 2
 
-        finding2<-c("2. Comparison of survey coverage with reported coverage: To check if the data reporting system is working well",
-                    "Reported coverage is much higher than survey coverage
-
-                    (i.e., routine reporting is likely overestimating true coverage)","",
-                    "Reported coverage is much lower than survey coverage
-
-                    (i.e., routine reporting is likely underestimating true coverage)", "",
-                    "Reported coverage and survey coverage are similar")
-        potcause2<-c("","Drug distributors are incorrectly reporting on ingestion of the drugs",
-                     "The total population figure (e.g.,  the denominator) is incorrect or outdated, or people from outside the survey area are also taking the drugs and are being included in the total treatment tallies",
-                     "The total population figure (e.g., the denominator) is incorrect or outdated",
-                     "Data are not being correctly aggregated or reported ", "A good reporting system is in place")
-        corrective2<-c("","Conduct a Data Quality Self-Assessment or Data Quality Assessment to diagnose where the data reporting system is breaking down
-
-                       Improve the skills and motivation of drug distributors through better training and supervision; consider use of mHealth technologies
-
-                       Make improvements to the tally sheets and/or registers used ", "Determine if more accurate population estimates or projections are available and apply a correction factor to routine coverage estimates as appropriate
-
-                       Ask the drug distributors to record and report non-resident individuals ingesting the drugs separately and do not include them in the numerator for calculating PC coverage",
-                       "Refer to corrective actions given for the same problem above",
-                       "Conduct a Data Quality Self-Assessment or Data Quality Assessment  to diagnose where the data reporting system is breaking down",
-                       "Congratulate your teams. Continue using the current reporting system, with increased confidence that it provides a good estimate of PC coverage.  Less expenditure in future surveys (at least for the current survey area) is required.")
+        finding2<-c(i18n("2. Comparison of survey coverage with reported coverage: To check if the data reporting system is working well", language, vocab),
+                    paste(i18n("Reported coverage is much higher than survey coverage", language, vocab),i18n("(i.e., routine reporting is likely overestimating true coverage)", language, vocab), sep="\n\n"),"",
+                    paste(i18n("Reported coverage is much lower than survey coverage", language, vocab),"(i.e., routine reporting is likely underestimating true coverage)", sep="\n\n"), "",
+                    i18n("Reported coverage and survey coverage are similar", language, vocab))
+        potcause2<-c("",i18n("Drug distributors are incorrectly reporting on ingestion of the drugs", language, vocab),
+                     i18n("The total population figure (e.g.,  the denominator) is incorrect or outdated, or people from outside the survey area are also taking the drugs and are being included in the total treatment tallies", language, vocab),
+                     i18n("The total population figure (e.g., the denominator) is incorrect or outdated", language, vocab),
+                     paste(i18n("Data are not being correctly aggregated or reported", language, vocab), ""), i18n("A good reporting system is in place", language, vocab))
+        corrective2<-c("",paste(i18n("Conduct a Data Quality Self-Assessment or Data Quality Assessment to diagnose where the data reporting system is breaking down", language, vocab),
+                                i18n("Improve the skills and motivation of drug distributors through better training and supervision; consider use of mHealth technologies", language, vocab),
+                                paste(i18n("Make improvements to the tally sheets and/or registers used", language, vocab), ""), sep="\n\n"),
+                       paste(i18n("Determine if more accurate population estimates or projections are available and apply a correction factor to routine coverage estimates as appropriate", language, vocab),
+                             i18n("Ask the drug distributors to record and report non-resident individuals ingesting the drugs separately and do not include them in the numerator for calculating PC coverage", language, vocab), sep="\n\n"),
+                       i18n("Refer to corrective actions given for the same problem above", language, vocab),
+                       i18n("Conduct a Data Quality Self-Assessment or Data Quality Assessment to diagnose where the data reporting system is breaking down", language, vocab),
+                       i18n("Congratulate your teams. Continue using the current reporting system, with increased confidence that it provides a good estimate of PC coverage.  Less expenditure in future surveys (at least for the current survey area) is required.", language, vocab))
 
         apndxA2DF<-data.frame(finding2,potcause2,corrective2)
 
-        colnames(apndxA2DF)<-c("Finding or observation", "Potential Causes to Investigate", "Corrective action")
+        colnames(apndxA2DF)<-c(i18n("Finding or observation", language, vocab), i18n("Potential Causes to Investigate", language, vocab), i18n("Corrective action", language, vocab))
 
         apndxA2FT<-FlexTable(apndxA2DF, body.par.props = parProperties(padding= 1),
                              header.columns = FALSE,
@@ -1524,19 +1529,19 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
         #Table 3
 
-        finding3<-c("3. Comparison of survey coverage with programme reach: To assess compliance and the success of the programs social mobilization and communication strategy",
-                    "Survey coverage is less than programme reach","Survey coverage is greater than programme reach",
-                    "Survey coverage is close to or equal to programme reach")
-        potcause3<-c("","Check the reasons given for why individuals who were offered the drug did not swallow it",
-                     "There may be a problem with the coverage survey data.  Check to see if the survey team implemented the questionnaire correctly; recount results and check for arithmetic errors",
-                     "Compliance is high")
-        corrective3<-c("","Improved information and education campaigns may be needed prior to the next round to increase compliance",
-                       "Greater training may be needed to make sure the survey team correctly understands the difference between being offered the drug(s) and swallowing the drugs and that this difference is conveyed correctly to the respondents",
-                       "Congratulate the teams. Continue with the current information and education campaigns, as they appear to be working")
+        finding3<-c(i18n("3. Comparison of survey coverage with programme reach: To assess compliance and the success of the programs social mobilization and communication strategy", language, vocab),
+                    i18n("Survey coverage is less than programme reach", language, vocab),i18n("Survey coverage is greater than programme reach", language, vocab),
+                    i18n("Survey coverage is close to or equal to programme reach", language, vocab))
+        potcause3<-c("",i18n("Check the reasons given for why individuals who were offered the drug did not swallow it", language, vocab),
+                     i18n("There may be a problem with the coverage survey data.  Check to see if the survey team implemented the questionnaire correctly; recount results and check for arithmetic errors", language, vocab),
+                     i18n("Compliance is high", language, vocab))
+        corrective3<-c("",i18n("Improved information and education campaigns may be needed prior to the next round to increase compliance", language, vocab),
+                       i18n("Greater training may be needed to make sure the survey team correctly understands the difference between being offered the drug(s) and swallowing the drugs and that this difference is conveyed correctly to the respondents", language, vocab),
+                       i18n("Congratulate the teams. Continue with the current information and education campaigns, as they appear to be working", language, vocab))
 
         apndxA3DF<-data.frame(finding3,potcause3,corrective3)
 
-        colnames(apndxA3DF)<-c("Finding or observation", "Potential Causes to Investigate", "Corrective action")
+        colnames(apndxA3DF)<-c(i18n("Finding or observation", language, vocab), i18n("Potential Causes to Investigate", language, vocab), i18n("Corrective action", language, vocab))
 
         apndxA3FT<-FlexTable(apndxA3DF, body.par.props = parProperties(padding= 1),
                              header.columns = FALSE,
@@ -1558,7 +1563,7 @@ analyzeData1<-function(dat2, country, IU, disease, drug, r_coverage, sub_num){
 
 }
 
-analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
+analyzeData2<-function(dat2, country, IU, disease, drug, sub_num, vocab, lang='en'){
 
         #Creating vector that houses the colors for males and females for figures
 
@@ -1746,6 +1751,8 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
         female_pr2 = c(final[2:2,1:1],final[2:2,2:2] ,final[2:2,3:3])
         final_3 = data.frame(total_pr2, male_pr2, female_pr2)
 
+        cov_thresh_sentence = paste(i18n("WHO", language, vocab),i18n("Target", language, vocab),
+                                    i18n("Coverage", language, vocab), i18n("Threshold", language, vocab), sep="\n")
         plot1<- ggplot(data=final_3*100, aes(x=c(5,15,25), y=c(total_pr2[1:1],male_pr2[1:1],female_pr2[1:1])))+
                 geom_errorbar(aes(ymin=c(total_pr2[2:2],male_pr2[2:2], female_pr2[2:2]),
                                   ymax=c(total_pr2[3:3],male_pr2[3:3], female_pr2[3:3])),
@@ -1757,7 +1764,7 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
                 ylab(paste("Proportion of respondents who reported being offered \n",drug)) +
                 ggtitle("Estimated Programme Reach by Gender")+
                 theme(plot.title = element_text(hjust = 0.5, size=16))+
-                scale_x_continuous(breaks = c(5,15,25), limits = c(0, 30), labels=c("Overall","Male","Female"))+
+                scale_x_continuous(breaks = c(5,15,25), limits = c(0, 30), labels=c(i18n("Overall", language, vocab),i18n("Male", language, vocab),i18n("Female", language, vocab)))+
                 theme(
                         panel.grid.major.x=element_blank(),
                         panel.grid.minor.x=element_blank(),
@@ -1771,7 +1778,7 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
                 geom_text(label=paste(format(round(total_pr2[1:1]*100,1),nsmall=1),"%"), x=3, y=total_pr2[1:1]*100)+
                 geom_text(label=paste(format(round(male_pr2[1:1]*100,1),nsmall=1),"%"), x=13, y=male_pr2[1:1]*100)+
                 geom_text(label=paste(format(round(female_pr2[1:1]*100,1),nsmall=1), "%"), x=23, y=female_pr2[1:1]*100)+
-                scale_color_discrete(breaks="WHO \nTarget \nCoverage \nThreshold")
+                scale_color_discrete(breaks=cov_thresh_sentence)
 
         plot1
 
@@ -1789,7 +1796,7 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
         final_2 = data.frame(total_sc2, male_sc2, female_sc2)
 
         plot2<- ggplot(data=final_2*100, aes(x=c(5,15,25), y=c(total_sc2[1:1],male_sc2[1:1],female_sc2[1:1])))+
-                geom_hline(aes(yintercept=thresh, linetype="WHO \nTarget \nCoverage \nThreshold"),
+                geom_hline(aes(yintercept=thresh, linetype=cov_thresh_sentence),
                            color="red3")+
                 geom_errorbar(aes(ymin=c(total_sc2[2:2],male_sc2[2:2], female_sc2[2:2]),
                                   ymax=c(total_sc2[3:3],male_sc2[3:3],female_sc2[3:3])),
@@ -1800,10 +1807,11 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
                 xlab("")+
                 # geom_point(aes(5,r_coverage), color='black', size=2, shape=8)+       #Y-value will need to be pulled from the information the user enters on the homepage of the tool. Create a variable that will change the value of 90 based on this number
                 # geom_text(label='\nReported \nCoverage', x=8, y=r_coverage, size=3)+   #Y-value will need to be pulled from the information the user enters on the homepage of the tool. Create a variable that will change the value of 90 based on this number
-                ylab(paste("Proportion of respondents who reported swallowing \n",drug)) +
-                ggtitle("Estimated Survey Coverage by Gender")+
+                ylab(paste(i18n("Proportion of respondents who reported swallowing", language, vocab),
+                           "\n", drug, sep='')) +
+                ggtitle(i18n("Estimated Survey Coverage by Gender", language, vocab))+
                 theme(plot.title = element_text(hjust = 0.5, size=16))+
-                scale_x_continuous(breaks = c(5,15,25), limits = c(0, 30), labels=c("Overall","Male", "Female"))+
+                scale_x_continuous(breaks = c(5,15,25), limits = c(0, 30), labels=c(i18n("Overall", language, vocab),i18n("Male", language, vocab), i18n("Female", language, vocab)))+
                 theme(
                         panel.grid.major.x=element_blank(),
                         panel.grid.minor.x=element_blank(),
@@ -1817,7 +1825,7 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
                 geom_text(label=paste(format(round(total_sc2[1:1]*100,1),nsmall=1),"%"), x=3, y=total_sc2[1:1]*100)+
                 geom_text(label=paste(format(round(male_sc2[1:1]*100,1),nsmall=1),"%"), x=13, y=male_sc2[1:1]*100)+
                 geom_text(label=paste(format(round(female_sc2[1:1]*100,1),nsmall=1), "%"), x=23, y=female_sc2[1:1]*100)+
-                scale_color_discrete(breaks="WHO \nTarget \nCoverage \nThreshold") #Only allows "WHO"
+                scale_color_discrete(breaks=cov_thresh_sentence) #Only allows "WHO"
 
         plot2
 
@@ -1876,7 +1884,7 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
         #Confidence intervals for clusters/subunits in single district analysis
 
-        dat_treat.conf.lim<-dat2[,c("Interviewed","Swallowed","Subunit")]
+        dat_treat.conf.lim<-dat2[,c("Interviewed", "Swallowed", "Subunit")]
 
         dat_treat.conf.lim$uci<-0
         dat_treat.conf.lim$lci<-0
@@ -1899,15 +1907,16 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
 
         plot5<- ggplot(data=dat_treat.conf.lim, aes(x=Subunit, y=Treated))+
-                geom_hline(aes(yintercept=thresh, linetype="WHO \nTarget \nCoverage \nThreshold"),
+                geom_hline(aes(yintercept=thresh, linetype=cov_thresh_sentence),
                            color="red3")+
                 geom_point(stat="identity")+
                 geom_errorbar(aes(ymin=dat_treat.conf.lim$uci, ymax=dat_treat.conf.lim$lci),
                               width=.2,
                               position=position_dodge(.9))+
-                xlab("Cluster")+
-                ylab(paste("Proportion of respondents who reported swallowing \n",drug)) +
-                ggtitle("Plot of Survey Coverage by Subunit: Greatest to Least Coverage") +
+                xlab(i18n("Cluster", language, vocab))+
+                ylab(paste(i18n("Proportion of respondents who reported swallowing", language, vocab),
+                           "\n", drug, sep='')) +
+                ggtitle(i18n("Plot of Survey Coverage by Subunit: Greatest to Least Coverage", language, vocab)) +
                 theme(
                         plot.title = element_text(hjust = 0.5, size=12, face="bold"),
                         legend.title = element_blank(),
@@ -1946,7 +1955,8 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
         #Title page #
         #-----------#
 
-        titlepg<-pot(paste(disease, "Coverage Evaluation Results Summary:", IU,",", country,",", format(Sys.time(), '%B %Y')),
+        titlepg<-pot(paste(disease, i18n("Coverage Evaluation Results Summary:", language, vocab),
+                           IU,",", country,",", format(Sys.time(), '%B %Y')),
                      textProperties(font.weight = "bold", font.family = "Calibri",
                                     font.size = 20))
         titlepg
@@ -1954,10 +1964,10 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
         doc<-addParagraph(doc, titlepg)
         doc <- addParagraph( doc, '', stylename = 'Normal' )
 
-        sumsent<- pot("This summary reviews the results from coverage evaluation surveys for ",
+        sumsent<- pot(paste(i18n("This summary reviews the results from coverage evaluation surveys for", language, vocab), ' '),
                       textProperties(font.family = "Calibri"))+
                 pot(drug, textProperties(font.weight = "bold", font.family = "Calibri"))+
-                pot(" that were conducted in ",textProperties(font.family = "Calibri"))+
+                pot(paste(i18n(" that were conducted in", language, vocab), ""),textProperties(font.family = "Calibri"))+
                 pot(IU, textProperties(font.weight = "bold", font.family = "Calibri"))+
                 pot(", ", textProperties(font.weight = "bold", font.family = "Calibri"))+
                 pot(country, textProperties(font.weight = "bold", font.family = "Calibri"))+
@@ -1968,28 +1978,28 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
         doc<-addParagraph(doc, sumsent)
         doc <- addParagraph( doc, '', stylename = 'Normal' )
 
-        kt<-pot("Key Terms", textProperties(underlined = TRUE, font.family = "Calibri"))
+        kt<-pot(i18n("Key Terms", language, vocab), textProperties(underlined = TRUE, font.family = "Calibri"))
 
         doc<-addParagraph(doc, kt)
         doc <- addParagraph( doc, '', stylename = 'Normal' )
 
 
-        rc<-pot("Reported Coverage-", textProperties(font.weight = "bold", font.family = "Calibri"))+
-                pot(" The coverage calculated from data reported by all drug distributors, with census figures or drug distributor reports used to estimate the population denominator.",
+        rc<-pot(i18n("Reported Coverage:", language, vocab), textProperties(font.weight = "bold", font.family = "Calibri"))+
+                pot(i18n(" The coverage calculated from data reported by all drug distributors, with census figures or drug distributor reports used to estimate the population denominator.", language, vocab),
                     textProperties(font.family = "Calibri"))
 
         doc <- addParagraph( doc, rc)
         doc <- addParagraph( doc, '', stylename = 'Normal' )
 
-        sc<-pot("Survey Coverage-", textProperties(font.weight = "bold", font.family = "Calibri"))+
-                pot(" Coverage estimated through the use of population-based survey sampling methods. The denominator is the total number of individuals Survey and the numerator is the total number of individuals Survey who were identified as having ingested the drug.",
+        sc<-pot(i18n("Survey Coverage:", language, vocab), textProperties(font.weight = "bold", font.family = "Calibri"))+
+                pot(i18n(" Coverage estimated through the use of population-based survey sampling methods. The denominator is the total number of individuals Survey and the numerator is the total number of individuals Survey who were identified as having ingested the drug.", language, vocab),
                     textProperties(font.family = "Calibri"))
 
         doc <- addParagraph( doc, sc)
         doc <- addParagraph( doc, '', stylename = 'Normal' )
 
-        pr<-pot("Programme Reach-", textProperties(font.weight = "bold", font.family = "Calibri"))+
-                pot(" The proportion of people in the survey area who were given the opportunity to receive the preventive chemotherapy, regardless of whether the drug was ingested.",
+        pr<-pot(i18n("Programme Reach:", language, vocab), textProperties(font.weight = "bold", font.family = "Calibri"))+
+                pot(i18n(" The proportion of people in the survey area who were given the opportunity to receive the preventive chemotherapy, regardless of whether the drug was ingested.", language, vocab),
                     textProperties(font.family = "Calibri"))
 
         doc <- addParagraph( doc, pr)
@@ -2002,8 +2012,8 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
         doc<-addParagraph(doc, com)
         doc <- addParagraph( doc, '', stylename = 'Normal' )
 
-        iudef<-pot("Implementation Unit (IU)-", textProperties(font.weight = "bold", font.family = "Calibri"))+
-                pot(" Designated survey areas. Coverage surveys are typically conducted at the district level; however, in some cases they may be done at the province, county, or zonal level.",
+        iudef<-pot(i18n("Implementation Unit (IU):", language, vocab), textProperties(font.weight = "bold", font.family = "Calibri"))+
+                pot(i18n(" Designated survey areas. Coverage surveys are typically conducted at the district level; however, in some cases they may be done at the province, county, or zonal level.", language, vocab),
                     textProperties(font.family = "Calibri"))
 
         doc<-addParagraph(doc, iudef)
@@ -2031,7 +2041,7 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
         # Inserting Survey coverage results by district table                #
         #--------------------------------------------------------------------#
 
-        table1<-pot(paste("Table 1. Survey coverage results for",IU,",",
+        table1<-pot(paste(i18n("Table 1. Survey coverage results for", language, vocab),IU,",",
                           country, ",",format(Sys.time(), "%Y"),"."),
                     textProperties(font.family = "Calibri",
                                    font.weight = "bold"))
@@ -2055,9 +2065,9 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
                 #Renaming the columns
 
-                colnames(surcovDF) <- c("Implementation Unit", "Survey Coverage",
-                                        "Lower 95% Confidence Interval", "Upper 95% Confidence Interval",
-                                        "Design Effect", "Programme Reach")
+                colnames(surcovDF) <- c(i18n("Implementation Unit", language, vocab), i18n("Survey Coverage", language, vocab),
+                                        i18n("Lower 95% Confidence Interval", language, vocab), i18n("Upper 95% Confidence Interval", language, vocab),
+                                        i18n("Design Effect", language, vocab), i18n("Programme Reach", language, vocab))
 
                 #Creating the flextable in order to allow for conditional colorization
 
@@ -2078,9 +2088,9 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
                 #Renaming the columns
 
-                colnames(surcovDF) <- c("Implementation Unit","Survey Coverage",
-                                        "Lower 95% Confidence Interval", "Upper 95% Confidence Interval",
-                                        "Design Effect")
+                colnames(surcovDF) <- c(i18n("Implementation Unit", language, vocab),i18n("Survey Coverage", language, vocab),
+                                        i18n("Lower 95% Confidence Interval", language, vocab), i18n("Upper 95% Confidence Interval", language, vocab),
+                                        i18n("Design Effect", language, vocab))
 
                 #Creating the flextable in order to allow for conditional colorization
 
@@ -2105,19 +2115,19 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
         if (exists("r_coverage")){
 
-                titlervs<-pot(value = "VALIDATION OF REPORTED COVERAGE", format=title.font)
+                titlervs<-pot(value = i18n("VALIDATION OF REPORTED COVERAGE", language, vocab), format=title.font)
 
                 doc<-addParagraph(doc, titlervs)
 
-                valdef<-pot("When there is no significant difference between the reported and survey coverage, or when the two figures are relatively close (indicated by the colors in green) then the survey coverage is considered to “validate” the reported coverage.",
+                valdef<-pot(i18n("When there is no significant difference between the reported and survey coverage, or when the two figures are relatively close (indicated by the colors in green) then the survey coverage is considered to \"validate\" the reported coverage.", language, vocab),
                             textProperties(font.family = "Calibri"))
 
                 doc<-addParagraph(doc, valdef)
 
                 doc<- addParagraph( doc, '', stylename = 'Normal' )
 
-                table2<-pot(paste("Table 2. Interpretation of survey coverage results to determine if the survey coverage validates the reported coverage and whether the target threshold is met by each IU,",
-                                  country,",", format(Sys.time(), "%Y"),". The coloring of the cells indicates whether programmatic action is required (Green = on track, no action required; Yellow = caution, improvements can be made; Red = inadequate, action is required)."),
+                table2<-pot(paste(i18n("Table 2. Interpretation of survey coverage results to determine if the survey coverage validates the reported coverage and whether the target threshold is met by each IU,", language, vocab),
+                                  country,",", format(Sys.time(), "%Y"),i18n(". The coloring of the cells indicates whether programmatic action is required (Green = on track, no action required; Yellow = caution, improvements can be made; Red = inadequate, action is required).", language, vocab)),
                             textProperties(font.family = "Calibri",
                                            font.weight = "bold"))
 
@@ -2137,13 +2147,13 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
                         #Adding interpretations for the difference beween surveyed and reported coverage
 
-                        diffDF$interp<-ifelse(total_sc[2]*100<= r_coverage & r_coverage<=total_sc[3]*100, "Validated",
-                                              ifelse(abs(diffDF[,4])>=0 & abs(diffDF[,4])<=10,"Good",
-                                                     ifelse (abs(diffDF[,4])>10 & abs(diffDF[,4])<= 25, "Caution", "Action Required")))
+                        diffDF$interp<-ifelse(total_sc[2]*100<= r_coverage & r_coverage<=total_sc[3]*100, i18n("Validated", language, vocab),
+                                              ifelse(abs(diffDF[,4])>=0 & abs(diffDF[,4])<=10,i18n("Good", language, vocab),
+                                                     ifelse (abs(diffDF[,4])>10 & abs(diffDF[,4])<= 25, i18n("Caution", language, vocab), i18n("Action Required", language, vocab))))
 
                         #Renaming the columns
 
-                        colnames(diffDF) <- c("Implementation Unit", "Survey Coverage","Reported Coverage","Difference", "Interpretation")
+                        colnames(diffDF) <- c(i18n("Implementation Unit", language, vocab), i18n("Survey Coverage", language, vocab),i18n("Reported Coverage", language, vocab),i18n("Difference", language, vocab), "Interpretation")
 
                         #Creating the flextable in order to allow for conditional colorization
 
@@ -2161,7 +2171,7 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
                                              first = T,
                                              cell.properties = cellProperties(background.color = "#D4D6D8"))
 
-                        vars<-c("Difference")
+                        vars<-c(i18n("Difference", language, vocab))
 
                         #Cutoff points were just chosen from the example output, can easily be changed
 
@@ -2184,11 +2194,11 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
                 #Making the table that explains the interpretations of the RvsS data    #
                 #-----------------------------------------------------------------------#
 
-                Conclusion<-c("Validated", "Good", "Caution", "Action Required")
-                Interpretation<-c("The reported coverage is contained within the 95% confidence interval around the survey coverage.  This means the reported coverage can be considered be “validated” in that Implementation Unit; no action or improvements are required to the reporting system.",
-                                  "The reported coverage is outside the 95% confidence interval around the survey coverage but is still within ± 10 percentage points of the survey coverage, which suggests the reporting system is working well; no action or improvements are required to the reporting system.",
-                                  "The reported coverage is between ± 10 to 25 percentage points different from the survey coverage.  This suggests there could be a problem with the reporting system and action may be required if resources permit.",
-                                  "The reported coverage is at least ± 25 percentage points different from the survey coverage. This suggests that there is a real problem with the reported coverage and follow-up action to improve the reporting system in the Implementation Unit is required.")
+                Conclusion<-c(i18n("Validated", language, vocab), i18n("Good", language, vocab), i18n("Caution", language, vocab), i18n("Action Required", language, vocab))
+                Interpretation<-c(i18n("The reported coverage is contained within the 95% confidence interval around the survey coverage.  This means the reported coverage can be considered be \"validated\" in that Implementation Unit; no action or improvements are required to the reporting system.", language, vocab),
+                                  i18n("The reported coverage is outside the 95% confidence interval around the survey coverage but is still within +/- 10 percentage points of the survey coverage, which suggests the reporting system is working well; no action or improvements are required to the reporting system.", language, vocab),
+                                  i18n("The reported coverage is between +/- 10 to 25 percentage points different from the survey coverage.  This suggests there could be a problem with the reporting system and action may be required if resources permit.", language, vocab),
+                                  i18n("The reported coverage is at least +/- 25 percentage points different from the survey coverage. This suggests that there is a real problem with the reported coverage and follow-up action to improve the reporting system in the Implementation Unit is required.", language, vocab))
 
                 difkeyDF<-data.frame(Conclusion, Interpretation)
 
@@ -2225,14 +2235,14 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
         # females and males being offered and/or taking the drug                        #
         #-------------------------------------------------------------------------------#
 
-        title4<-pot(value = "SURVEY COVERAGE BY SEX", format=title.font)
+        title4<-pot(value = i18n("SURVEY COVERAGE BY SEX", language, vocab), format=title.font)
 
         doc<-addParagraph(doc, title4)
         doc<- addParagraph( doc, '', stylename = 'Normal' )
 
         if (exists("Offered", where=dat2)){
 
-                table3<-pot(paste("Table 3. Programme reach and survey coverage by sex:",IU, ",",
+                table3<-pot(paste(i18n("Table 3. Programme reach and survey coverage by sex:", language, vocab),IU, ",",
                                   country, ",", format(Sys.time(),"%Y"), "."),
                             textProperties(font.family = "Calibri",
                                            font.weight = "bold"))
@@ -2326,10 +2336,10 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
 
         if (exists("Offered", where=dat2)){
-                cover_sex$compr_male<-ifelse(chi.offer>=.05 ,"No", "Yes")
+                cover_sex$compr_male<-ifelse(chi.offer>=.05 ,i18n("No", language, vocab), i18n("Yes", language, vocab))
         }
 
-        cover_sex$compt_male<-ifelse(chi.swallow>=.05 ,"No", "Yes")
+        cover_sex$compt_male<-ifelse(chi.swallow>=.05 ,i18n("No", language, vocab), i18n("Yes", language, vocab))
 
 
 
@@ -2339,12 +2349,12 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
                 cover_sex<-cover_sex[,c(1,2,4,6,3,5,7)]
 
-                colnames(cover_sex) <- c("Implementation Unit", "% Reached amongst females interviewed (offered drug)",
-                                         "% Reached amongst males interviewed (offered drug)",
-                                         "Programme Reach for females statistically different from males",
-                                         "% Treated amongst females interviewed (swallowed drug)",
-                                         "% Treated amongst males interviewed (swallowed drug)",
-                                         "Treatment Coverage for females statistically different from males")
+                colnames(cover_sex) <- c(i18n("Implementation Unit", language, vocab), i18n("% Reached amongst females interviewed (offered drug)", language, vocab),
+                                         i18n("% Reached amongst males interviewed (offered drug)", language, vocab),
+                                         i18n("Programme Reach for females statistically different from males", language, vocab),
+                                         i18n("% Treated amongst females interviewed (swallowed drug)", language, vocab),
+                                         i18n("% Treated amongst males interviewed (swallowed drug)", language, vocab),
+                                         i18n("Treatment Coverage for females statistically different from males", language, vocab))
 
                 covsexFT<-FlexTable(cover_sex, body.par.props = parProperties(padding= 1,
                                                                               text.align = "center"),
@@ -2354,27 +2364,27 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
                                                                        font.family = "Calibri"),
                                     body.text.props = textProperties(font.family = "Calibri"))
 
-                vars2<-c("Programme Reach for females statistically different from males",
-                         "Treatment Coverage for females statistically different from males")
+                vars2<-c(i18n("Programme Reach for females statistically different from males", language, vocab),
+                         i18n("Treatment Coverage for females statistically different from males", language, vocab))
 
                 #Filling in the yes/no cell with color based on output
 
                 for (j in vars2) {
-                        covsexFT[cover_sex[, j]== "Yes" & (sum(dat2$Females_Offered/sum(dat2$Females_Interviewed))*100)>(sum(dat2$Males_Offered/sum(dat2$Males_Interviewed))*100), j] = cellProperties( background.color = "#428EFC")
-                        covsexFT[cover_sex[, j]== "Yes" & (sum(dat2$Females_Offered/sum(dat2$Females_Interviewed))*100)<(sum(dat2$Males_Offered/sum(dat2$Males_Interviewed))*100), j] = cellProperties( background.color = "#FF9F33")
-                        covsexFT[cover_sex[, j]== "Yes" & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)>(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#428EFC")
-                        covsexFT[cover_sex[, j]== "Yes" & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)<(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#FF9F33")
-                        covsexFT[cover_sex[, j]== "No", j] = cellProperties( background.color = "#D9DADB")
+                        covsexFT[cover_sex[, j]== i18n("Yes", language, vocab) & (sum(dat2$Females_Offered/sum(dat2$Females_Interviewed))*100)>(sum(dat2$Males_Offered/sum(dat2$Males_Interviewed))*100), j] = cellProperties( background.color = "#428EFC")
+                        covsexFT[cover_sex[, j]== i18n("Yes", language, vocab) & (sum(dat2$Females_Offered/sum(dat2$Females_Interviewed))*100)<(sum(dat2$Males_Offered/sum(dat2$Males_Interviewed))*100), j] = cellProperties( background.color = "#FF9F33")
+                        covsexFT[cover_sex[, j]== i18n("Yes", language, vocab) & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)>(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#428EFC")
+                        covsexFT[cover_sex[, j]== i18n("Yes", language, vocab) & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)<(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#FF9F33")
+                        covsexFT[cover_sex[, j]== i18n("No", language, vocab), j] = cellProperties( background.color = "#D9DADB")
                 }
 
                 covsexFT
 
         } else {
 
-                colnames(cover_sex) <- c("Implementation Unit",
-                                         "% Treated amongst females interviewed (swallowed drug)",
-                                         "% Treated amongst males interviewed (swallowed drug)",
-                                         "Treatment Coverage for females statistically different from males")
+                colnames(cover_sex) <- c(i18n("Implementation Unit", language, vocab),
+                                         i18n("% Treated amongst females interviewed (swallowed drug)", language, vocab),
+                                         i18n("% Treated amongst males interviewed (swallowed drug)", language, vocab),
+                                         i18n("Treatment Coverage for females statistically different from males", language, vocab))
 
                 covsexFT<-FlexTable(cover_sex, body.par.props = parProperties(padding= 1,
                                                                               text.align = "center"),
@@ -2384,14 +2394,14 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
                                                                        font.family = "Calibri"),
                                     body.text.props = textProperties(font.family = "Calibri"))
 
-                vars2<-c("Treatment Coverage for females statistically different from males")
+                vars2<-c(i18n("Treatment Coverage for females statistically different from males", language, vocab))
 
                 #Filling in the yes/no cell with color based on output
 
                 for (j in vars2) {
-                        covsexFT[cover_sex[, j]== "Yes" & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)>(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#428EFC")
-                        covsexFT[cover_sex[, j]== "Yes" & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)<(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#FF9F33")
-                        covsexFT[cover_sex[, j]== "No", j] = cellProperties( background.color = "#D9DADB")
+                        covsexFT[cover_sex[, j]== i18n("Yes", language, vocab) & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)>(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#428EFC")
+                        covsexFT[cover_sex[, j]== i18n("Yes", language, vocab) & (sum(dat2$Females_Swallowed)/sum(dat2$Females_Offered)*100)<(sum(dat2$Males_Swallowed)/sum(dat2$Males_Offered)*100), j] = cellProperties( background.color = "#FF9F33")
+                        covsexFT[cover_sex[, j]== i18n("No", language, vocab), j] = cellProperties( background.color = "#D9DADB")
                 }
 
                 covsexFT
@@ -2399,13 +2409,13 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
         doc<-addFlexTable(doc, covsexFT)
 
-        blue<-pot("BLUE", textProperties(color = "#428EFC", font.weight = "bold", font.family = "Calibri"))+
-                pot(" indicates females had a significantly higher percentage")
+        blue<-pot(i18n("BLUE", language, vocab), textProperties(color = "#428EFC", font.weight = "bold", font.family = "Calibri"))+
+                pot(paste("", i18n("indicates females had a significantly higher percentage", language, vocab)))
 
         doc<-addParagraph(doc, blue)
 
-        green<-pot("ORANGE", textProperties(color = "#FF9F33", font.weight = "bold", font.family = "Calibri"))+
-                pot(" indicates males had a significantly higher percentage")
+        green<-pot(i18n("ORANGE", language, vocab), textProperties(color = "#FF9F33", font.weight = "bold", font.family = "Calibri"))+
+                pot(paste("", i18n("indicates males had a significantly higher percentage", language, vocab)))
 
         doc<-addParagraph(doc, green)
 
@@ -2439,14 +2449,14 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
                 reachplot<-ggplot(meltreach, aes(IU, value, color=variable,
                                                  fill=factor(variable,
-                                                             labels=c("Male",
-                                                                      "Female")),
+                                                             labels=c(i18n("Male", language, vocab),
+                                                                      i18n("Female", language, vocab))),
                                                  width=.5))+
                         geom_bar(position = position_dodge(.5),
                                  stat="identity",colour="#000000", size=0)+
-                        ggtitle("Programme Reach by Sex")+
-                        ylab("Programme Reach (%)")+
-                        xlab("Implementation Unit")+
+                        ggtitle(i18n("Programme Reach by Sex", language, vocab))+
+                        ylab(i18n("Programme Reach (%)", language, vocab))+
+                        xlab(i18n("Implementation Unit", language, vocab))+
                         theme(
                                 legend.position="bottom",
                                 legend.title = element_blank(),
@@ -2471,14 +2481,14 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
         treatplot<-ggplot(melttreat, aes(IU, value, color=variable,
                                          fill=factor(variable,
-                                                     labels=c("Male",
-                                                              "Female")),
+                                                     labels=c(i18n("Male", language, vocab),
+                                                              i18n("Female", language, vocab))),
                                          width=.5))+
                 geom_bar(position = position_dodge(.5),
                          stat="identity",colour="#000000", size=0)+
-                ggtitle("Survey Coverage by Sex")+
-                ylab("Survey Coverage (%)")+
-                xlab("Implementation Unit")+
+                ggtitle(i18n("Survey Coverage by Sex", language, vocab))+
+                ylab(i18n("Survey Coverage (%)", language, vocab))+
+                xlab(i18n("Implementation Unit", language, vocab))+
                 theme(
                         legend.position="bottom",
                         legend.title = element_blank(),
@@ -2555,14 +2565,14 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
                 sexcompliplot<-ggplot(sexcompli, aes(IU, compliance, color=sex,
                                                                 fill=factor(sex,
-                                                                            labels=c("Male",
-                                                                                     "Female")),
+                                                                            labels=c(i18n("Male", language, vocab),
+                                                                                     i18n("Female", language, vocab))),
                                                                 width=.5))+
                         geom_bar(position = position_dodge(.5),
                                  stat="identity",colour="#000000", size=0)+
-                        ggtitle("Compliance by Sex")+
-                        ylab("Compliance (%)")+
-                        xlab("Implementation Unit")+
+                        ggtitle(i18n("Compliance by Sex", language, vocab))+
+                        ylab(i18n("Compliance (%)", language, vocab))+
+                        xlab(i18n("Implementation Unit", language, vocab))+
                         theme(
                                 legend.position="bottom",
                                 legend.title = element_blank(),
@@ -2623,14 +2633,14 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
                 sexnoncompliplot<-ggplot(sexnoncompli, aes(IU, ncompli, color=sex,
                                                            fill=factor(sex,
-                                                                       labels=c("Male",
-                                                                                "Female")),
+                                                                       labels=c(i18n("Male", language, vocab),
+                                                                                i18n("Female", language, vocab))),
                                                            width=.5))+
                         geom_bar(position = position_dodge(.5),
                                  stat="identity",colour="#000000", size=0)+
-                        ggtitle("Non-Compliance by Sex")+
+                        ggtitle(i18n("Non-Compliance by Sex", language, vocab))+
                         ylab("Non-Compliance (%)")+
-                        xlab("Implementation Unit")+
+                        xlab(i18n("Implementation Unit", language, vocab))+
                         theme(
                                 legend.position="bottom",
                                 legend.title = element_blank(),
@@ -2681,7 +2691,7 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
                 sexnoncompli<-as.data.frame(sex.ncompli.df)
                 sexnoncompli$IU<-IU
 
-                colnames(sex.ncompli.df) <- c("Sex", "Non-Compliance",
+                colnames(sex.ncompli.df) <- c(i18n("Sex", language, vocab), i18n("Non-Compliance", language, vocab),
                                               "Lower 95% \n Confidence Interval",
                                               "Upper 95% \n Confidence Interval")
 
@@ -2693,7 +2703,7 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
                                                                              font.family = "Calibri"),
                                           body.text.props = textProperties(font.family = "Calibri"))
 
-                table4b<-pot(paste("Table 4. Non-Compliance in ",
+                table4b<-pot(paste(i18n("Table 4. Non-Compliance in", language, vocab), "",
                                    IU,",",country, ",", format(Sys.time(),"%Y"), "."),
                              textProperties(font.family = "Calibri",
                                             font.weight = "bold"))
@@ -2711,16 +2721,16 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
         # Appendix A     #
         #----------------#
 
-        title9<-pot("Appendix A. Interpreting and following up reported and survey coverage results",
+        title9<-pot(i18n("Appendix A. Interpreting and following up reported and survey coverage results", language, vocab),
                     textProperties(font.weight = "bold", font.family = "Calibri",
                                    font.size = 16))
 
         doc<-addParagraph(doc, title9)
 
-        apndxpar<-pot("This table is taken from the WHO document,", textProperties(font.family = "Calibri"))+
-                pot("“Coverage Evaluation Surveys for Preventive Chemotherapy: Field Guide for Implementation”",
+        apndxpar<-pot(i18n("This table is taken from the WHO document,", language, vocab), textProperties(font.family = "Calibri"))+
+                pot(i18n("\"Coverage Evaluation Surveys for Preventive Chemotherapy: Field Guide for Implementation,\"", language, vocab),
                     textProperties(font.weight = "bold", font.family = "Calibri"))+
-                pot(" and is intended to help users in developing their own Action Plan as the result of a coverage survey(s).   This table lists the possible findings that can occur when the survey coverage is compared to both the target coverage threshold and the reported coverage.  The table provides potential causes to investigate and corrective actions that can be taken.",
+                pot(i18n(" and is intended to help users in developing their own Action Plan as the result of a coverage survey(s).   This table lists the possible findings that can occur when the survey coverage is compared to both the target coverage threshold and the reported coverage.  The table provides potential causes to investigate and corrective actions that can be taken.", language, vocab),
                     textProperties(font.family = "Calibri"))
 
         doc<- addParagraph(doc, apndxpar)
@@ -2728,29 +2738,26 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
         #Table 1
 
-        finding<-c("1. Comparison of survey coverage to target coverage threshold: To get a better estimate of coverage where there is reason to believe routine reporting is incorrect", "Survey coverage is below the target coverage threshold","","Survey coverage is above the target coverage threshold")
-        potcause<-c("","Check the coverage in the different sub-populations to determine whether any particular group is being left out or has lower than average coverage (e.g., males vs. females, SAC, particular sub-districts, ethnic minorities, etc.)",
-                    "Check the reasons for why the eligible population was not  offered the drug
-
-                    Check the reasons for the eligible population not swallowing the drug",
-                    "Communities and drug distributors are motivated and the programme is functioning well")
-        corrective<-c("","Develop and implement targeted social mobilization as required
-
-                      Investigate the reasons why the sub-population(s) are not adequately covered and make the appropriate change in MDA strategy/platform to reach the sub-population(s)
-
-                      Consider using Independent Monitoring or the Coverage Supervision Tool with MDA mop-up during the next round to improve coverage",
-                      "Tailor corrective action according to reasons given which include strengthening:
-                      - Drug supply chain
-                      - Social mobilization and information and education campaigns (look at reasons given by those who did swallow the drug)
-                      - Drug delivery platform used
-                      - Training, supervision and motivation of drug distributors
-                      - Communication on adverse events
-                      - Capacity of national and/or district level staff",
-                      "Congratulate your teams.  Sustain programme momentum for the next year to maintain coverage levels")
+        finding<-c(i18n("1. Comparison of survey coverage to target coverage threshold: To get a better estimate of coverage where there is reason to believe routine reporting is incorrect", language, vocab), i18n("Survey coverage is below the target coverage threshold", language, vocab),"",i18n("Survey coverage is above the target coverage threshold", language, vocab))
+        potcause<-c("",i18n("Check the coverage in the different sub-populations to determine whether any particular group is being left out or has lower than average coverage (e.g., males vs. females, SAC, particular sub-districts, ethnic minorities, etc.)", language, vocab),
+                    paste(i18n("Check the reasons for why the eligible population was not  offered the drug", language, vocab), "\n",
+                          i18n("Check the reasons for the eligible population not swallowing the drug", language, vocab), sep=""),
+                    i18n("Communities and drug distributors are motivated and the programme is functioning well", language, vocab))
+        corrective<-c("",paste(i18n("Develop and implement targeted social mobilization as required", language, vocab),"\n",
+                               i18n("Investigate the reasons why the sub-population(s) are not adequately covered and make the appropriate change in MDA strategy/platform to reach the sub-population(s)", language, vocab), "\n",
+                               i18n("Consider using Independent Monitoring or the Coverage Supervision Tool with MDA mop-up during the next round to improve coverage", language, vocab),"\n", sep=""),
+                      paste(i18n("Tailor corrective action according to reasons given which include strengthening:", language, vocab),
+                      i18n("- Drug supply chain", language, vocab),
+                      i18n("- Social mobilization and information and education campaigns (look at reasons given by those who did swallow the drug)", language, vocab),
+                      i18n("- Drug delivery platform used", language, vocab),
+                      i18n("- Training, supervision and motivation of drug distributors", language, vocab),
+                      i18n("- Communication on adverse events", language, vocab),
+                      i18n("- Capacity of national and/or district level staff", language, vocab), sep="\n"),
+                      i18n("Congratulate your teams.  Sustain programme momentum for the next year to maintain coverage levels", language, vocab))
 
         apndxA1DF<-data.frame(finding,potcause,corrective)
 
-        colnames(apndxA1DF)<-c("Finding or observation", "Potential Causes to Investigate", "Corrective action")
+        colnames(apndxA1DF)<-c(i18n("Finding or observation", language, vocab), i18n("Potential Causes to Investigate", language, vocab), i18n("Corrective action", language, vocab))
 
         apndxA1FT<-FlexTable(apndxA1DF, body.par.props = parProperties(padding= 1),
                              header.par.props = parProperties(padding = 3,
@@ -2772,32 +2779,26 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
         #Table 2
 
-        finding2<-c("2. Comparison of survey coverage with reported coverage: To check if the data reporting system is working well",
-                    "Reported coverage is much higher than survey coverage
-
-                    (i.e., routine reporting is likely overestimating true coverage)","",
-                    "Reported coverage is much lower than survey coverage
-
-                    (i.e., routine reporting is likely underestimating true coverage)", "",
-                    "Reported coverage and survey coverage are similar")
-        potcause2<-c("","Drug distributors are incorrectly reporting on ingestion of the drugs",
-                     "The total population figure (e.g.,  the denominator) is incorrect or outdated, or people from outside the survey area are also taking the drugs and are being included in the total treatment tallies",
-                     "The total population figure (e.g., the denominator) is incorrect or outdated",
-                     "Data are not being correctly aggregated or reported ", "A good reporting system is in place")
-        corrective2<-c("","Conduct a Data Quality Self-Assessment or Data Quality Assessment to diagnose where the data reporting system is breaking down
-
-                       Improve the skills and motivation of drug distributors through better training and supervision; consider use of mHealth technologies
-
-                       Make improvements to the tally sheets and/or registers used ", "Determine if more accurate population estimates or projections are available and apply a correction factor to routine coverage estimates as appropriate
-
-                       Ask the drug distributors to record and report non-resident individuals ingesting the drugs separately and do not include them in the numerator for calculating PC coverage",
-                       "Refer to corrective actions given for the same problem above",
-                       "Conduct a Data Quality Self-Assessment or Data Quality Assessment  to diagnose where the data reporting system is breaking down",
-                       "Congratulate your teams. Continue using the current reporting system, with increased confidence that it provides a good estimate of PC coverage.  Less expenditure in future surveys (at least for the current survey area) is required.")
+        finding2<-c(i18n("2. Comparison of survey coverage with reported coverage: To check if the data reporting system is working well", language, vocab),
+                    paste(i18n("Reported coverage is much higher than survey coverage", language, vocab),i18n("(i.e., routine reporting is likely overestimating true coverage)", language, vocab), sep="\n\n"),"",
+                    paste(i18n("Reported coverage is much lower than survey coverage", language, vocab),"(i.e., routine reporting is likely underestimating true coverage)", sep="\n\n"), "",
+                    i18n("Reported coverage and survey coverage are similar", language, vocab))
+        potcause2<-c("",i18n("Drug distributors are incorrectly reporting on ingestion of the drugs", language, vocab),
+                     i18n("The total population figure (e.g.,  the denominator) is incorrect or outdated, or people from outside the survey area are also taking the drugs and are being included in the total treatment tallies", language, vocab),
+                     i18n("The total population figure (e.g., the denominator) is incorrect or outdated", language, vocab),
+                     paste(i18n("Data are not being correctly aggregated or reported", language, vocab), ""), i18n("A good reporting system is in place", language, vocab))
+        corrective2<-c("",paste(i18n("Conduct a Data Quality Self-Assessment or Data Quality Assessment to diagnose where the data reporting system is breaking down", language, vocab),
+                                i18n("Improve the skills and motivation of drug distributors through better training and supervision; consider use of mHealth technologies", language, vocab),
+                                paste(i18n("Make improvements to the tally sheets and/or registers used", language, vocab), ""), sep="\n\n"),
+                       paste(i18n("Determine if more accurate population estimates or projections are available and apply a correction factor to routine coverage estimates as appropriate", language, vocab),
+                             i18n("Ask the drug distributors to record and report non-resident individuals ingesting the drugs separately and do not include them in the numerator for calculating PC coverage", language, vocab), sep="\n\n"),
+                       i18n("Refer to corrective actions given for the same problem above", language, vocab),
+                       i18n("Conduct a Data Quality Self-Assessment or Data Quality Assessment to diagnose where the data reporting system is breaking down", language, vocab),
+                       i18n("Congratulate your teams. Continue using the current reporting system, with increased confidence that it provides a good estimate of PC coverage.  Less expenditure in future surveys (at least for the current survey area) is required.", language, vocab))
 
         apndxA2DF<-data.frame(finding2,potcause2,corrective2)
 
-        colnames(apndxA2DF)<-c("Finding or observation", "Potential Causes to Investigate", "Corrective action")
+        colnames(apndxA2DF)<-c(i18n("Finding or observation", language, vocab), i18n("Potential Causes to Investigate", language, vocab), i18n("Corrective action", language, vocab))
 
         apndxA2FT<-FlexTable(apndxA2DF, body.par.props = parProperties(padding= 1),
                              header.columns = FALSE,
@@ -2822,19 +2823,19 @@ analyzeData2<-function(dat2, country, IU, disease, drug, sub_num){
 
         #Table 3
 
-        finding3<-c("3. Comparison of survey coverage with programme reach: To assess compliance and the success of the programs social mobilization and communication strategy",
-                    "Survey coverage is less than programme reach","Survey coverage is greater than programme reach",
-                    "Survey coverage is close to or equal to programme reach")
-        potcause3<-c("","Check the reasons given for why individuals who were offered the drug did not swallow it",
-                     "There may be a problem with the coverage survey data.  Check to see if the survey team implemented the questionnaire correctly; recount results and check for arithmetic errors",
-                     "Compliance is high")
-        corrective3<-c("","Improved information and education campaigns may be needed prior to the next round to increase compliance",
-                       "Greater training may be needed to make sure the survey team correctly understands the difference between being offered the drug(s) and swallowing the drugs and that this difference is conveyed correctly to the respondents",
-                       "Congratulate the teams. Continue with the current information and education campaigns, as they appear to be working")
+        finding3<-c(i18n("3. Comparison of survey coverage with programme reach: To assess compliance and the success of the programs social mobilization and communication strategy", language, vocab),
+                    i18n("Survey coverage is less than programme reach", language, vocab),i18n("Survey coverage is greater than programme reach", language, vocab),
+                    i18n("Survey coverage is close to or equal to programme reach", language, vocab))
+        potcause3<-c("",i18n("Check the reasons given for why individuals who were offered the drug did not swallow it", language, vocab),
+                     i18n("There may be a problem with the coverage survey data.  Check to see if the survey team implemented the questionnaire correctly; recount results and check for arithmetic errors", language, vocab),
+                     i18n("Compliance is high", language, vocab))
+        corrective3<-c("",i18n("Improved information and education campaigns may be needed prior to the next round to increase compliance", language, vocab),
+                       i18n("Greater training may be needed to make sure the survey team correctly understands the difference between being offered the drug(s) and swallowing the drugs and that this difference is conveyed correctly to the respondents", language, vocab),
+                       i18n("Congratulate the teams. Continue with the current information and education campaigns, as they appear to be working", language, vocab))
 
         apndxA3DF<-data.frame(finding3,potcause3,corrective3)
 
-        colnames(apndxA3DF)<-c("Finding or observation", "Potential Causes to Investigate", "Corrective action")
+        colnames(apndxA3DF)<-c(i18n("Finding or observation", language, vocab), i18n("Potential Causes to Investigate", language, vocab), i18n("Corrective action", language, vocab))
 
         apndxA3FT<-FlexTable(apndxA3DF, body.par.props = parProperties(padding= 1),
                              header.columns = FALSE,
