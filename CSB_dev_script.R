@@ -32,6 +32,7 @@ drug_name<-"Mebendazole"
 disease_name<-"STH"
 number_of_subunits<-30
 reported_coverage_header<-1.25
+language <- 'en'
 
 ############################################################################
 
