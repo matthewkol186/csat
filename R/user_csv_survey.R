@@ -46,6 +46,7 @@ library(reshape)
 library(PropCIs)
 
 source("R/check_data_validity.R")
+source("R/set_WHO_constants.R")
 
 wordDocUserSurvey <- function() {
   dat <- read_csv(csv_url)
@@ -82,103 +83,116 @@ analyzeDataUserSurvey <- function(dat) {
 
   #Check to see if the column they specfied exists, and rename columns based on user input if they do
 
-  #
-  # District
-  #
-
-  if (any(colnames(dat)==implementation_unit_header)){
-          colnames(dat)[colnames(dat)==implementation_unit_header]<-"district"
-  }else{
-          stop("Column header for Implementation Unit was not found in the .csv file")
+  allHeadersMarked <- checkUnmatchedHeaders(dat, implementation_unit_header, cluster_header, sex_header, age_header, offered_drug_header, swallowed_drug_header,
+                          school_attendance_header, reported_coverage_header)
+  if(!allHeadersMarked) {
+    stop("Please make sure that the column headers of the file exactly match the names of the headers that
+         you entered into the web tool. The following headers were not found: " + allHeadersMarked)
   }
 
-  #
-  # Cluster
-  #
+  #rename columns according
+  dat <- renameColumns(dat, implementation_unit_header, cluster_header, sex_header, age_header, offered_drug_header, swallowed_drug_header,
+                       school_attendance_header, reported_coverage_header)
 
-  if (any(colnames(dat)==cluster_header)){
-          colnames(dat)[colnames(dat)==cluster_header]<-"cluster"
-  }else{
-          stop("Column header for Cluster was not found in the .csv file")
-  }
 
-  #
-  # Sex
-  #
-
-  if (any(colnames(dat)==sex_header)){
-          colnames(dat)[colnames(dat)==sex_header]<-"sex"
-  }else{
-          stop("Column header for Sex was not found in the .csv file")
-  }
-
-  #
-  # Offered Drug
-  #
-
-  if(exists('offered_drug_header')){
-          if (any(colnames(dat)==offered_drug_header)){
-                  colnames(dat)[colnames(dat)==offered_drug_header]<-"offer"
-          }else{
-                  stop("Column header for Offered Drug was not found in the .csv file")
-          }
-  }else{
-          dat$offer<-NULL
-  }
-
-  #
-  # Swallowed Drug
-  #
-
-  if (any(colnames(dat)==swallowed_drug_header)){
-          colnames(dat)[colnames(dat)==swallowed_drug_header]<-"swallow"
-  }else{
-          stop("Column header for Swallowed Drug was not found in the .csv file")
-  }
-
-  #
-  # Age
-  #
-
-  if(exists('age_header')){
-          if (any(colnames(dat)==age_header)){
-    colnames(dat)[colnames(dat)==age_header]<-"age"
-          }else{
-                  stop("Column header for Age was not found in the .csv file")
-          }
-  }else{
-          dat$age<-NULL
-  }
-
-  #
-  # School Attendance
-  #
-
-  if(exists('school_attendance_header')){
-          if (any(colnames(dat)==school_attendance_header)){
-                  colnames(dat)[colnames(dat)==school_attendance_header]<-"school"
-          }else{
-                  stop("Column header for School Attendance was not found in the .csv file")
-          }
-
-  }else{
-    dat$school<-NULL
-  }
-
-  #
-  # Reported Coverage
-  #
-
-  if(exists('reported_coverage_header')){
-          if (any(colnames(dat)==reported_coverage_header)){
-                  colnames(dat)[colnames(dat)==reported_coverage_header]<-"coverage"
-          }else{
-                  stop("Column header for Reported Coverage was not found in the .csv file")
-          }
-
-  }else{
-    dat$coverage<-NULL
-  }
+#
+#   #
+#   # District
+#   #
+#
+#   if (any(colnames(dat)==implementation_unit_header)){
+#           colnames(dat)[colnames(dat)==implementation_unit_header]<-"district"
+#   }else{
+#           stop("Column header for Implementation Unit was not found in the .csv file")
+#   }
+#
+#   #
+#   # Cluster
+#   #
+#
+#   if (any(colnames(dat)==cluster_header)){
+#           colnames(dat)[colnames(dat)==cluster_header]<-"cluster"
+#   }else{
+#           stop("Column header for Cluster was not found in the .csv file")
+#   }
+#
+#   #
+#   # Sex
+#   #
+#
+#   if (any(colnames(dat)==sex_header)){
+#           colnames(dat)[colnames(dat)==sex_header]<-"sex"
+#   }else{
+#           stop("Column header for Sex was not found in the .csv file")
+#   }
+#
+#   #
+#   # Offered Drug
+#   #
+#
+#   if(exists('offered_drug_header')){
+#           if (any(colnames(dat)==offered_drug_header)){
+#                   colnames(dat)[colnames(dat)==offered_drug_header]<-"offer"
+#           }else{
+#                   stop("Column header for Offered Drug was not found in the .csv file")
+#           }
+#   }else{
+#           dat$offer<-NULL
+#   }
+#
+#   #
+#   # Swallowed Drug
+#   #
+#
+#   if (any(colnames(dat)==swallowed_drug_header)){
+#           colnames(dat)[colnames(dat)==swallowed_drug_header]<-"swallow"
+#   }else{
+#           stop("Column header for Swallowed Drug was not found in the .csv file")
+#   }
+#
+#   #
+#   # Age
+#   #
+#
+#   if(exists('age_header')){
+#           if (any(colnames(dat)==age_header)){
+#     colnames(dat)[colnames(dat)==age_header]<-"age"
+#           }else{
+#                   stop("Column header for Age was not found in the .csv file")
+#           }
+#   }else{
+#           dat$age<-NULL
+#   }
+#
+#   #
+#   # School Attendance
+#   #
+#
+#   if(exists('school_attendance_header')){
+#           if (any(colnames(dat)==school_attendance_header)){
+#                   colnames(dat)[colnames(dat)==school_attendance_header]<-"school"
+#           }else{
+#                   stop("Column header for School Attendance was not found in the .csv file")
+#           }
+#
+#   }else{
+#     dat$school<-NULL
+#   }
+#
+#   #
+#   # Reported Coverage
+#   #
+#
+#   if(exists('reported_coverage_header')){
+#           if (any(colnames(dat)==reported_coverage_header)){
+#                   colnames(dat)[colnames(dat)==reported_coverage_header]<-"coverage"
+#           }else{
+#                   stop("Column header for Reported Coverage was not found in the .csv file")
+#           }
+#
+#   }else{
+#     dat$coverage<-NULL
+#   }
 
   #If the district variable is a character varaible, this will make all entries
   #upper case in order to avoid errors in case entry from original dataset

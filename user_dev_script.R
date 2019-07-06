@@ -5,7 +5,7 @@
 # configure local settings
 # source("unshared_settings.R")
 
-setwd("C:/Users/matth/Documents/csat")
+setwd("~VikasMaturi1/GitHub/csat/csat")
 
 ############################################################################
 # This file gets uploading to the web server
@@ -15,7 +15,7 @@ source("R/user_csv_survey.R")
 ############################################################################
 # Set values here in development only.  Will be sent from the web server.
 
-csv_url <- "./tests/testthat/demo_files/Multidistrict_Demo.csv"
+csv_url <- "./demo_files/Multidistrict_Demo.csv"
 country_name<- "Murkonia"
 num_implementation_units<-3
 as.numeric(num_implementation_units)
@@ -26,7 +26,7 @@ implementation_unit_header<-"DISTRICT"
 cluster_header<- "VILLAGE_NUMBER"
 sex_header<- "SEX"
 age_header<-"AGE"
-#school_attendance_header<-NULL
+school_attendance_header<-NULL
 offered_drug_header<- "OFFERED_ALB"
 swallowed_drug_header<- "SWALLOWED_ALB"
 reported_coverage_header<- "REPORTED_COVERAGE"

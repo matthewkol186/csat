@@ -32,7 +32,7 @@ checkHeaderMatch <- function(column_header, data) {
 
 # Check whether all relevant header names are included using checkHeaderMatch function. If so, nothing will happen.
 # If any header names are not included, we stop the program and return the error message with all missing headers.
-checkUnmatchedHeaders <- function(data, implementation_unit_header, cluster_header, sex_header, age_header, offered_drug_header, swallowed_drug_header,
+checkUnmatchedHeaders <- function(data, implementation_unit_header, cluster_header, sex_header, age_header, offered_drug_header, swallowed_drug_header, school_attendance_header,
                                    reported_coverage_header) {
 
 
@@ -47,7 +47,7 @@ checkUnmatchedHeaders <- function(data, implementation_unit_header, cluster_head
       "swallowed drug", checkHeaderMatch(swallowed_drug_header, data),
     )
 
-  # if the user specifies one or more of the following data column in the web tool, we check to make sure the column exists in
+  # if the user specifies one or more of the following data columns in the web tool, we check to make sure the column exists in
   # the uploaded data
   if(!is.null(age_header)) {
     headerMatchResults <-
@@ -61,6 +61,12 @@ checkUnmatchedHeaders <- function(data, implementation_unit_header, cluster_head
       add_row(header = "offered drug", result = checkHeaderMatch(offered_drug_header, data))
   }
 
+  if(!is.null(school_attendance_header)) {
+    headerMatchResults <-
+      headerMatchResults %>%
+      add_row(header = "school attendance", result = checkHeaderMatch(school_attendance_header, data))
+  }
+
   if(!is.null(reported_coverage_header)) {
     headerMatchResults <-
       headerMatchResults %>%
@@ -68,7 +74,7 @@ checkUnmatchedHeaders <- function(data, implementation_unit_header, cluster_head
   }
 
   if(all(headerMatchResults$result == TRUE)) {
-    TRUE#maybe we should do nothing here, idk
+    return(TRUE)#maybe we should do nothing here, idk
   }
   else  {
 
@@ -86,6 +92,22 @@ checkUnmatchedHeaders <- function(data, implementation_unit_header, cluster_head
     return(vectorNoHeader)
   }
 }
+
+renameColumns <- function(data, implementation_unit_header, cluster_header, sex_header, age_header, offered_drug_header, swallowed_drug_header, school_attendance_header,
+                          reported_coverage_header){
+
+  colnames(data)[colnames(data) == sex_header] <- "sex"
+  colnames(data)[colnames(data) == implementation_unit_header] <- "district"
+  colnames(data)[colnames(data) == cluster_header] <- "cluster"
+  colnames(data)[colnames(data) == age_header] <- "age"
+  colnames(data)[colnames(data) == offered_drug_header] <- "offer"
+  colnames(data)[colnames(data) == swallowed_drug_header] <- "swallow"
+  colnames(data)[colnames(data) == school_attendance_header] <- "school"
+  colnames(data)[colnames(data) == reported_coverage_header] <- "coverage"
+
+  return(data)
+}
+
 
 findColsPresent <- function(all_cols, cols_to_check, data) {
   cols_to_remove <- vector()
